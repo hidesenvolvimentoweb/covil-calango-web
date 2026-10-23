@@ -1,0 +1,36 @@
+@if(item.navCap){
+  <div mat-subheader class="nav-caption">
+    {{ item.navCap }}
+  </div>
+  } @if(!item.navCap && !item.external) {
+  <a
+    mat-list-item
+    (click)="onItemSelected(item)"
+    class="menu-list-item {{ item.bgcolor }}"
+    [ngClass]="{
+      activeMenu: item.route ? router.isActive(item.route, true) : false,
+      expanded: expanded,
+      disabled: item.disabled
+    }"
+  >
+    <span class="icon-notification-wrapper">
+      <i-tabler
+        class="routeIcon"
+        [name]="item.iconName"
+        matListItemIcon
+      ></i-tabler>
+
+      <span class="hide-menu">{{ item.displayName }}</span>
+
+      <span
+        *ngIf="item.displayName === 'Solicitações' && notificacoesPendentes > 0"
+        class="notification-badge"
+      >
+        {{ notificacoesPendentes }}
+      </span>
+    </span>
+
+
+  </a>
+
+  }
