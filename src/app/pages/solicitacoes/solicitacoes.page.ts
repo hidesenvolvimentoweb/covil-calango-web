@@ -39,12 +39,12 @@ export class SolicitacoesPage implements OnInit {
   }
 
   atualizarListaSolicitacoes() {
-    this.solicitacaoService.getAllByParams(this.buildParams()).subscribe(res => this.solicitacoes.data = res);
+    this.solicitacaoService.getAllByParams(this.buildParams()).subscribe((res: any) => this.solicitacoes.data = res);
   }
 
   removerSolicitacaoDaLista(solicitacao: SolicitacaoDTO) {
     const data = this.solicitacoes.data;
-    const index = data.findIndex(item => item.id === solicitacao.id);
+    const index = data.findIndex((item: any) => item.id === solicitacao.id);
     data.splice(index, 1);
     this.solicitacoes.data = data;
   }
