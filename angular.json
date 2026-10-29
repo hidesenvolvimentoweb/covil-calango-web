@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Spike": {
+    "covil-calango-web": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": ["apexcharts", "bezier-easing", "moment", "sockjs-client"],
-            "outputPath": "dist/Spike",
+            "outputPath": "dist/covil-calango-web",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -66,13 +66,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Spike:build:production"
+              "buildTarget": "covil-calango-web:build:production"
             },
             "hmr": {
               "hmr": true
             },
             "development": {
-              "buildTarget": "Spike:build:development"
+              "buildTarget": "covil-calango-web:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +80,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Spike:build"
+            "buildTarget": "covil-calango-web:build"
           }
         },
         "test": {

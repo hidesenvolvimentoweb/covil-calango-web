@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url: 'http://200.141.27.3:8081',
+  url: 'http://localhost:8080',
   googleClientId: '746459776771-s9b6rmkspleb3vku95h5o9cndht45ebo.apps.googleusercontent.com'
 };
 

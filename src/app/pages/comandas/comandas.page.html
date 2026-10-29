@@ -21,7 +21,7 @@
             Nome do Cliente
           </th>
           <td mat-cell *matCellDef="let comanda" class="text-center">
-            <span><span class="f-w-600 f-s-14">{{ comanda.usuario.nome }}</span></span>
+            <span><span class="f-w-600 f-s-14">{{ comanda.nomeCliente || comanda.usuario?.nome }}</span></span>
           </td>
         </ng-container>
 

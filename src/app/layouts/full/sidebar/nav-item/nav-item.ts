@@ -3,6 +3,7 @@ export interface NavItem {
     iconName?: string;
     navCap?: string;
     route?: string;
+    permission?: string;
     children?: NavItem[];
     chip?: boolean;
     chipContent?: string;

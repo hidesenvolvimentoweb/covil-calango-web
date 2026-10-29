@@ -8,7 +8,7 @@
         <div class="col-12">
           <mat-label class="f-w-600 m-b-8 d-block">Nome do Cliente</mat-label>
           <mat-form-field color="accent">
-            <input matInput [value]="comanda.usuario?.nome" readonly />
+            <input matInput [value]="comanda.nomeCliente || comanda.usuario?.nome" readonly />
           </mat-form-field>
         </div>
 

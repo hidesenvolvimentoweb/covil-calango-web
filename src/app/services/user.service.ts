@@ -22,6 +22,10 @@ export class UserStateService {
     return this._currentUser();
   }
 
+  hasPermission(permission: string): boolean {
+    return this.currentUser()?.perfis?.some(perfil => perfil.permissoes?.includes(permission)) ?? false;
+  }
+
   clearUser(): void {
     this._currentUser.set(null);
     this.clearStateFromStorage();

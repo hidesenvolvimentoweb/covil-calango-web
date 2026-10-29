@@ -16,6 +16,7 @@ import { navItems } from './sidebar/sidebar-data';
 import { UserStateService } from 'src/app/services/user.service';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { NavItem } from './sidebar/nav-item/nav-item';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -43,7 +44,7 @@ export class FullComponent {
   @ViewChild('content', { static: true })
   public content!: MatSidenavContent;
 
-  public navItems = navItems;
+  public navItems: NavItem[] = [];
   public resView = false;
   public options = this.settings.getOptions();
   public notificacoesPendentes = 0;
@@ -61,6 +62,11 @@ export class FullComponent {
     public userStateService: UserStateService,
     private websocketService: WebsocketService
   ) {
+    const visibleItems = navItems.filter(item =>
+      !item.permission || this.userStateService.hasPermission(item.permission)
+    );
+    this.navItems = visibleItems.some(item => item.route) ? visibleItems : [];
+
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW])
       .subscribe((state) => {
