@@ -2,7 +2,7 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
-ARG API_URL=http://200.141.27.3:8080
+ARG API_URL
 
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
