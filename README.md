@@ -8,11 +8,19 @@ Atualmente o sistema está sendo servido no [vercel](http://vercel.com/) e expos
 
 ## Executando com Docker
 
-Para construir a imagem e iniciar a aplicação:
+Configure `API_URL` (URL base da API) e `WEB_PORT` (porta local do WEB) em um arquivo `.env` na pasta do projeto:
 
-```bash
-docker compose up --build
+Exemplo de `.env`:
+
+```env
+API_URL=https://api.exemplo.com
+WEB_PORT=8080
 ```
 
-A aplicação ficará disponível em <http://localhost:8080>. Para executar em segundo plano, use `docker compose up --build -d`; para parar e remover o container, use `docker compose down`.
+Construa a imagem e inicie a aplicação:
 
+```bash
+docker compose up -d --build
+```
+
+A aplicação ficará disponível em <http://localhost:8080>. Para parar e remover o container, use `docker compose down`.
