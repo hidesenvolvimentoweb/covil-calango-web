@@ -1,4 +1,4 @@
-import { PerfilDTO } from './perfil.dto';
+import { PerfilDTO } from "./perfil.dto";
 
 export class UsuarioDTO {
   public id?: number;
@@ -16,4 +16,12 @@ export class UsuarioDTO {
     this.email = usuario?.email;
     this.perfis = usuario?.perfis;
   }
+}
+
+export interface UsuarioRequestDTO {
+  id?: number;
+  nome?: string;
+  contato?: string;
+  email?: string;
+  password?: string;
 }

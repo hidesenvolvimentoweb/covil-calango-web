@@ -1,28 +1,29 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ThemePalette } from '@angular/material/core';
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { ThemePalette } from "@angular/material/core";
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   signal,
-} from '@angular/core';
+} from "@angular/core";
 import {
   CdkDrag,
   CdkDragDrop,
   CdkDropList,
   moveItemInArray,
-} from '@angular/cdk/drag-drop';
-import { MatCardModule } from '@angular/material/card';
+} from "@angular/cdk/drag-drop";
+import { MatCardModule } from "@angular/material/card";
 import {
   MatChipEditedEvent,
   MatChipInputEvent,
   MatChipsModule,
-} from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatButtonModule } from '@angular/material/button';
+} from "@angular/material/chips";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { LiveAnnouncer } from "@angular/cdk/a11y";
+import { MatButtonModule } from "@angular/material/button";
+import { TablerIconsModule } from "angular-tabler-icons";
 
 export interface ChipColor {
   name: string;
@@ -38,9 +39,9 @@ export interface Vegetable {
 }
 
 @Component({
-  selector: 'app-chips',
-  templateUrl: './chips.component.html',
-  styleUrls: ['./chips.component.scss'],
+  selector: "app-chips",
+  templateUrl: "./chips.component.html",
+  styleUrls: ["./chips.component.scss"],
   imports: [
     MatFormFieldModule,
     MatChipsModule,
@@ -50,19 +51,22 @@ export interface Vegetable {
     CdkDrag,
     FormsModule,
     ReactiveFormsModule,
-    MatButtonModule
+    MatButtonModule,
+    TablerIconsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppChipsComponent {
+  public announcer = inject(LiveAnnouncer);
+
   // drag n drop
-  readonly vegetables = signal<Vegetable[]>([
-    { name: 'apple' },
-    { name: 'banana' },
-    { name: 'strawberry' },
-    { name: 'orange' },
-    { name: 'kiwi' },
-    { name: 'cherry' },
+  public readonly vegetables = signal<Vegetable[]>([
+    { name: "apple" },
+    { name: "banana" },
+    { name: "strawberry" },
+    { name: "orange" },
+    { name: "kiwi" },
+    { name: "cherry" },
   ]);
 
   drop(event: CdkDragDrop<Vegetable[]>) {
@@ -75,21 +79,36 @@ export class AppChipsComponent {
   //
   // Stacked
   //
-  availableColors: ChipColor[] = [
-    { name: 'Primary', color: 'primary' },
-    { name: 'Accent', color: 'accent' },
-    { name: 'Warn', color: 'warn' },
+  public availableColors: ChipColor[] = [
+    { name: "Primary", color: "primary" },
+    { name: "Accent", color: "accent" },
+    { name: "Warn", color: "warn" },
   ];
 
   //
   //  chips with input
   //
-  addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  fruits: Fruit[] = [{ name: 'Lemon' }, { name: 'Lime' }, { name: 'Apple' }];
+  public addOnBlur = true;
+  public readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  public fruits: Fruit[] = [
+    { name: "Lemon" },
+    { name: "Lime" },
+    { name: "Apple" },
+  ];
+
+  //
+  // form control
+  //
+  public readonly keywords = signal([
+    "angular",
+    "how-to",
+    "tutorial",
+    "accessibility",
+  ]);
+  public readonly formControl = new FormControl(["angular"]);
 
   add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
+    const value = (event.value || "").trim();
 
     // Add our fruit
     if (value) {
@@ -124,15 +143,8 @@ export class AppChipsComponent {
     }
   }
 
-  // form control
-
-  readonly keywords = signal(['angular', 'how-to', 'tutorial', 'accessibility']);
-  readonly formControl = new FormControl(['angular']);
-
-  announcer = inject(LiveAnnouncer);
-
   removeKeyword(keyword: string) {
-    this.keywords.update(keywords => {
+    this.keywords.update((keywords) => {
       const index = keywords.indexOf(keyword);
       if (index < 0) {
         return keywords;
@@ -145,11 +157,11 @@ export class AppChipsComponent {
   }
 
   addForm(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
+    const value = (event.value || "").trim();
 
     // Add our keyword
     if (value) {
-      this.keywords.update(keywords => [...keywords, value]);
+      this.keywords.update((keywords) => [...keywords, value]);
     }
 
     // Clear the input value
@@ -157,5 +169,5 @@ export class AppChipsComponent {
   }
 }
 function isDragDrop(object: any): object is CdkDragDrop<string[]> {
-  return 'previousIndex' in object;
+  return "previousIndex" in object;
 }

@@ -1,61 +1,75 @@
-import { Routes } from '@angular/router';
-import { BlankComponent } from './layouts/blank/blank.component';
-import { FullComponent } from './layouts/full/full.component';
-import { DashboardPage } from './pages/dashboard/dashboard.page';
-import { LoginComponent } from './pages/login/login.component';
-import { AuthGuard } from './guards/auth.guard';
-import { NoAuthGuard } from './guards/no-auth.guard';
-import { PermissionGuard } from './guards/permission.guard';
+import { Routes } from "@angular/router";
+import { BlankComponent } from "./layouts/blank/blank.component";
+import { FullComponent } from "./layouts/full/full.component";
+import { DashboardPage } from "./pages/dashboard/dashboard.page";
+import { LoginComponent } from "./pages/login/login.component";
+import { AuthGuard } from "./guards/auth.guard";
+import { NoAuthGuard } from "./guards/no-auth.guard";
+import { PermissionGuard } from "./guards/permission.guard";
 
 export const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: FullComponent,
     children: [
       {
-        path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
+        path: "",
+        redirectTo: "/dashboard",
+        pathMatch: "full",
       },
       {
-        path: 'dashboard',
+        path: "dashboard",
         component: DashboardPage,
         canActivate: [AuthGuard, PermissionGuard],
-        data: { permission: 'web-dashboard' }
+        data: { permission: "web-dashboard" },
       },
       {
-        path: 'pedidos',
-        loadChildren: () => import('./pages/pedidos/pedidos.routes').then((m) => m.PedidosRoutes),
+        path: "pedidos",
+        loadChildren: () =>
+          import("./pages/pedidos/pedidos.routes").then((m) => m.PedidosRoutes),
         canActivate: [AuthGuard, PermissionGuard],
-        data: { permission: 'web-pedidos' }
+        data: { permission: "web-pedidos" },
       },
       {
-        path: 'comandas',
-        loadChildren: () => import('./pages/comandas/comandas.routes').then((m) => m.ComandasRoutes),
+        path: "comandas",
+        loadChildren: () =>
+          import("./pages/comandas/comandas.routes").then(
+            (m) => m.ComandasRoutes,
+          ),
         canActivate: [AuthGuard, PermissionGuard],
-        data: { permission: 'web-comandas' }
+        data: { permission: "web-comandas" },
       },
       {
-        path: 'solicitacoes',
-        loadChildren: () => import('./pages/solicitacoes/solicitacoes.routes').then((m) => m.SolicitacoesRoutes),
+        path: "solicitacoes",
+        loadChildren: () =>
+          import("./pages/solicitacoes/solicitacoes.routes").then(
+            (m) => m.SolicitacoesRoutes,
+          ),
         canActivate: [AuthGuard, PermissionGuard],
-        data: { permission: 'web-solicitacoes' }
+        data: { permission: "web-solicitacoes" },
+      },
+      {
+        path: "admin",
+        loadChildren: () =>
+          import("./pages/admin/admin.routes").then((m) => m.AdminRoutes),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: { profile: "ROLE_ADMINISTRADOR" },
       },
     ],
   },
   {
-    path: '',
+    path: "",
     component: BlankComponent,
     children: [
       {
-        path: 'login',
+        path: "login",
         component: LoginComponent,
         // canActivate: [NoAuthGuard]
       },
     ],
   },
   {
-    path: '**',
-    redirectTo: 'authentication/error',
+    path: "**",
+    redirectTo: "authentication/error",
   },
 ];

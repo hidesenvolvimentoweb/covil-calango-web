@@ -1,10 +1,13 @@
 @use "sass:map";
 @use "@angular/material" as mat;
 
-@include mat.form-field-overrides((container-height: 37px,
+@include mat.form-field-overrides(
+  (
+    container-height: 37px,
     outlined-container-shape: var(--mat-sys-corner-medium),
     container-vertical-padding: 6px,
-  ));
+  )
+);
 
 // forms
 html {

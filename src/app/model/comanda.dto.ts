@@ -1,4 +1,4 @@
-import { UsuarioDTO } from './usuario.dto';
+import { UsuarioDTO } from "./usuario.dto";
 
 export class ComandaDTO {
   public id?: number;

@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export enum StatusPedidoEnum {
-  SOLICITADO = 'SOLICITADO',
-  EM_ANDAMENTO = 'EM_ANDAMENTO',
-  PRONTO = 'PRONTO',
-  FINALIZADO = 'FINALIZADO',
-  CANCELADO = 'CANCELADO'
+  SOLICITADO = "SOLICITADO",
+  EM_ANDAMENTO = "EM_ANDAMENTO",
+  PRONTO = "PRONTO",
+  FINALIZADO = "FINALIZADO",
+  CANCELADO = "CANCELADO",
 }
 
 export const fromStatusPedidoEnumValue = (status: string): string => {
   switch (status) {
     case StatusPedidoEnum.SOLICITADO:
-      return 'Solicitado';
+      return "Solicitado";
     case StatusPedidoEnum.EM_ANDAMENTO:
-      return 'Em Andamento';
+      return "Em Andamento";
     case StatusPedidoEnum.PRONTO:
-      return 'Pronto';
+      return "Pronto";
     case StatusPedidoEnum.FINALIZADO:
-      return 'Finalizado';
+      return "Finalizado";
     case StatusPedidoEnum.CANCELADO:
-      return 'Cancelado';
+      return "Cancelado";
     default:
-      return '';
+      return "";
   }
 };

@@ -5,4 +5,3 @@ export class LoginDTO {
   public senha?: string;
   public provider: string;
 }
-

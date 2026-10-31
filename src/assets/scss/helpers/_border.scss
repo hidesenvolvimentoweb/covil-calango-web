@@ -1,32 +1,29 @@
-@use 'variables';
+@use "variables";
 
 $utilities: (
-  'border': (
+  "border": (
     property: border,
     class: b,
-    values: variables.$borders
+    values: variables.$borders,
   ),
-  'border-top': (
+  "border-top": (
     property: border-top,
     class: b-t,
-    values: variables.$borders
+    values: variables.$borders,
   ),
-  'border-bottom': (
+  "border-bottom": (
     property: border-bottom,
     class: b-b,
-    values: variables.$borders
+    values: variables.$borders,
   ),
-  'border-left': (
+  "border-left": (
     property: border-left,
     class: b-l,
-    values: variables.$borders
+    values: variables.$borders,
   ),
-  'border-right': (
+  "border-right": (
     property: border-right,
     class: b-r,
-    values: variables.$borders
+    values: variables.$borders,
   ),
-  
 );
-
-

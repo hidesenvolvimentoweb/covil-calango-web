@@ -3,7 +3,7 @@
 .mat-drawer.sidebarNav {
   width: $sidenav-desktop;
   flex-shrink: 0;
-  transition: width .4s cubic-bezier(.25,.8,.25,1);
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: absolute;
   overflow-x: hidden;
   top: 0 !important;

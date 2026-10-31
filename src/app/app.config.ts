@@ -1,16 +1,26 @@
-import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { routes } from './app.routes';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideClientHydration } from '@angular/platform-browser';
-import { TablerIconsModule } from 'angular-tabler-icons';
-import * as TablerIcons from 'angular-tabler-icons/icons';
-import { NgScrollbarModule } from 'ngx-scrollbar';
-import { MaterialModule } from './material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { httpLoadingInterceptor } from './interceptors/http-loading-interceptor';
-import { socialAuthServiceConfig } from './config';
+import {
+  ApplicationConfig,
+  provideZoneChangeDetection,
+  importProvidersFrom,
+} from "@angular/core";
+import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { routes } from "./app.routes";
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from "@angular/router";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { provideClientHydration } from "@angular/platform-browser";
+import { TablerIconsModule } from "angular-tabler-icons";
+import * as TablerIcons from "angular-tabler-icons/icons";
+import { NgScrollbarModule } from "ngx-scrollbar";
+import { MaterialModule } from "./material.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { httpLoadingInterceptor } from "./interceptors/http-loading-interceptor";
+import { socialAuthServiceConfig } from "./config";
+import { MatPaginatorIntl } from "@angular/material/paginator";
+import { PortuguesePaginatorIntl } from "./services/portuguese-paginator-intl";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,10 +29,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({
-        scrollPositionRestoration: 'enabled',
-        anchorScrolling: 'enabled' }
-      ),
-      withComponentInputBinding()
+        scrollPositionRestoration: "enabled",
+        anchorScrolling: "enabled",
+      }),
+      withComponentInputBinding(),
     ),
     provideHttpClient(withInterceptors([httpLoadingInterceptor])),
     provideClientHydration(),
@@ -34,5 +44,6 @@ export const appConfig: ApplicationConfig = {
       TablerIconsModule.pick(TablerIcons),
       NgScrollbarModule,
     ),
+    { provide: MatPaginatorIntl, useClass: PortuguesePaginatorIntl },
   ],
 };

@@ -13,17 +13,17 @@ export const defaults: AppSettings = {
 };
 
 export const socialAuthServiceConfig = {
-  provide: 'SocialAuthServiceConfig',
+  provide: "SocialAuthServiceConfig",
   useValue: {
     autoLogin: false,
     providers: [
       {
         id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider(environment.googleClientId)
-      }
+        provider: new GoogleLoginProvider(environment.googleClientId),
+      },
     ],
     onError: (error: any) => {
       console.error(error);
-    }
+    },
   } as SocialAuthServiceConfig,
-}
+};

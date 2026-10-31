@@ -1,9 +1,9 @@
-import { Routes } from '@angular/router';
-import { ComandasPage } from './comandas.page';
+import { Routes } from "@angular/router";
+import { ComandasPage } from "./comandas.page";
 
 export const ComandasRoutes: Routes = [
   {
-    path: 'listar',
+    path: "listar",
     component: ComandasPage,
-  }
+  },
 ];

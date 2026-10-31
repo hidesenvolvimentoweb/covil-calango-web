@@ -1,0 +1,31 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="key" class="icon-24 text-success"></i-tabler>
+  <span>{{ data.id ? "Alterar Permissão" : "Cadastrar Permissão" }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <form [formGroup]="form" id="permissao-form" (ngSubmit)="salvar()" class="admin-dialog-form">
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Nome da Permissão</mat-label>
+      <input matInput formControlName="name" maxlength="255" />
+      @if (form.get("name")?.hasError("required")) {
+        <mat-error>Informe o Nome da Permissão.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    class="bg-success text-white admin-dialog-action"
+    type="submit"
+    form="permissao-form"
+    [disabled]="form.invalid || salvando"
+  >
+    <i-tabler name="device-floppy" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    {{ data.id ? "Salvar alterações" : "Cadastrar" }}
+  </button>
+</mat-dialog-actions>

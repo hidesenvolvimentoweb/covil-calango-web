@@ -1,3 +1,7 @@
+<div class="page-title p-b-10">
+  <i-tabler name="layout-dashboard" class="page-title-icon text-success"></i-tabler>
+  <mat-card-title>Dashboard</mat-card-title>
+</div>
 <div class="row">
   <div class="col-lg-4">
     <app-card-pedidos
@@ -27,7 +31,9 @@
 
 <div class="row">
   <div class="col-lg-6">
-    <app-proximos-pedidos [pedidos]="pedidosSolicitados.concat(pedidosEmAndamento)"></app-proximos-pedidos>
+    <app-proximos-pedidos
+      [pedidos]="pedidosSolicitados.concat(pedidosEmAndamento)"
+    ></app-proximos-pedidos>
   </div>
   <div class="col-lg-6">
     <app-comandas-abertas></app-comandas-abertas>

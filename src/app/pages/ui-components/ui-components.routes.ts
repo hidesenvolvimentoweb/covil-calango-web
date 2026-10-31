@@ -1,44 +1,44 @@
-import { Routes } from '@angular/router';
+import { Routes } from "@angular/router";
 
 // ui
-import { AppBadgeComponent } from './badge/badge.component';
-import { AppChipsComponent } from './chips/chips.component';
-import { AppListsComponent } from './lists/lists.component';
-import { AppMenuComponent } from './menu/menu.component';
-import { AppTooltipsComponent } from './tooltips/tooltips.component';
-import { AppFormsComponent } from './forms/forms.component';
-import { AppTablesComponent } from './tables/tables.component';
+import { AppBadgeComponent } from "./badge/badge.component";
+import { AppChipsComponent } from "./chips/chips.component";
+import { AppListsComponent } from "./lists/lists.component";
+import { AppMenuComponent } from "./menu/menu.component";
+import { AppTooltipsComponent } from "./tooltips/tooltips.component";
+import { AppFormsComponent } from "./forms/forms.component";
+import { AppTablesComponent } from "./tables/tables.component";
 
 export const UiComponentsRoutes: Routes = [
   {
-    path: '',
+    path: "",
     children: [
       {
-        path: 'badge',
+        path: "badge",
         component: AppBadgeComponent,
       },
       {
-        path: 'chips',
+        path: "chips",
         component: AppChipsComponent,
       },
       {
-        path: 'lists',
+        path: "lists",
         component: AppListsComponent,
       },
       {
-        path: 'menu',
+        path: "menu",
         component: AppMenuComponent,
       },
       {
-        path: 'tooltips',
+        path: "tooltips",
         component: AppTooltipsComponent,
       },
       {
-        path: 'forms',
+        path: "forms",
         component: AppFormsComponent,
       },
       {
-        path: 'tables',
+        path: "tables",
         component: AppTablesComponent,
       },
     ],

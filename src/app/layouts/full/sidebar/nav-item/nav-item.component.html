@@ -1,8 +1,9 @@
-@if(item.navCap){
+@if (item.navCap) {
   <div mat-subheader class="nav-caption">
     {{ item.navCap }}
   </div>
-  } @if(!item.navCap && !item.external) {
+}
+@if (!item.navCap && !item.external) {
   <a
     mat-list-item
     (click)="onItemSelected(item)"
@@ -10,27 +11,19 @@
     [ngClass]="{
       activeMenu: item.route ? router.isActive(item.route, true) : false,
       expanded: expanded,
-      disabled: item.disabled
+      disabled: item.disabled,
     }"
   >
     <span class="icon-notification-wrapper">
-      <i-tabler
-        class="routeIcon"
-        [name]="item.iconName"
-        matListItemIcon
-      ></i-tabler>
+      <i-tabler class="routeIcon" [name]="item.iconName" matListItemIcon></i-tabler>
 
       <span class="hide-menu">{{ item.displayName }}</span>
 
-      <span
-        *ngIf="item.displayName === 'Solicitações' && notificacoesPendentes > 0"
-        class="notification-badge"
-      >
-        {{ notificacoesPendentes }}
-      </span>
+      @if (item.displayName === "Solicitações" && notificacoesPendentes > 0) {
+        <span class="notification-badge">
+          {{ notificacoesPendentes }}
+        </span>
+      }
     </span>
-
-
   </a>
-
-  }
+}

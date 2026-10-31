@@ -1,5 +1,5 @@
-import { ComandaDTO } from './comanda.dto';
-import { ProdutoDTO } from './produtos.dto';
+import { ComandaDTO } from "./comanda.dto";
+import { ProdutoDTO } from "./produtos.dto";
 
 export class PedidoDTO {
   public id?: number;

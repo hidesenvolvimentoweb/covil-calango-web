@@ -1,6 +1,9 @@
 <mat-card class="cardWithShadow theme-card">
   <mat-card-header>
-    <mat-card-title class="m-b-0">Form</mat-card-title>
+    <div class="page-title">
+      <i-tabler name="forms" class="page-title-icon text-success"></i-tabler>
+      <mat-card-title class="m-b-0">Form</mat-card-title>
+    </div>
   </mat-card-header>
   <mat-card-content class="b-t-1">
     <form>
@@ -16,10 +19,8 @@
           <mat-label class="f-w-600 m-b-8 d-block">Country</mat-label>
           <mat-form-field appearance="outline" class="w-100">
             <mat-select [(value)]="selectedCountry">
-              @for(option of country; track option.value) {
-              <mat-option [value]="option.value">{{
-                option.viewValue
-                }}</mat-option>
+              @for (option of country; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -35,10 +36,8 @@
           <mat-label class="f-w-600 m-b-8 d-block">State</mat-label>
           <mat-form-field appearance="outline" class="w-100">
             <mat-select [(value)]="selectedState">
-              @for(option of state; track option.value) {
-              <mat-option [value]="option.value">{{
-                option.viewValue
-                }}</mat-option>
+              @for (option of state; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -54,10 +53,8 @@
           <mat-label class="f-w-600 m-b-8 d-block">City</mat-label>
           <mat-form-field appearance="outline" class="w-100">
             <mat-select [(value)]="selectedCity">
-              @for(option of city; track option.value) {
-              <mat-option [value]="option.value">{{
-                option.viewValue
-                }}</mat-option>
+              @for (option of city; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
               }
             </mat-select>
           </mat-form-field>

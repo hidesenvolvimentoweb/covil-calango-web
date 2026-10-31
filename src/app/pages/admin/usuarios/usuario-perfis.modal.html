@@ -1,0 +1,128 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="user-cog" class="icon-24 text-success"></i-tabler>
+  <span>Perfis de {{ usuario?.nome ?? "usuário" }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <mat-card class="cardWithShadow m-b-20">
+    <mat-card-content>
+      <form class="row align-items-center" [formGroup]="filtroForm" (ngSubmit)="consultar()">
+        <div class="col-md-12">
+          <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+            <mat-label>Pesquisar perfil por nome</mat-label>
+            <input matInput formControlName="name" maxlength="255" />
+          </mat-form-field>
+        </div>
+        <div class="col-12 d-flex flex-wrap align-items-center gap-3 mt-3">
+          <button mat-flat-button class="bg-success text-white" type="submit">
+            <i-tabler name="search" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+            Consultar
+          </button>
+          <button
+            mat-stroked-button
+            class="admin-filter-action"
+            type="button"
+            (click)="limparFiltro()"
+          >
+            <i-tabler name="refresh" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+            Limpar
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+          <thead>
+            <tr>
+              <th class="text-center">Perfil</th>
+              <th class="text-center">Permissões</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (perfil of perfis; track perfil) {
+              <tr>
+                <td>{{ perfil.name }}</td>
+                <td class="text-center">
+                  <mat-chip-set
+                    class="d-flex justify-content-center flex-wrap"
+                    aria-label="Permissões do perfil"
+                  >
+                    @for (permissao of perfil.permissoes; track permissao) {
+                      <mat-chip class="f-s-12">
+                        <i-tabler name="key" class="icon-16 m-r-4"></i-tabler>
+                        {{ permissao }}
+                      </mat-chip>
+                    }
+                    @if (!perfil.permissoes.length) {
+                      <span class="text-muted">Nenhuma permissão</span>
+                    }
+                  </mat-chip-set>
+                </td>
+                <td class="text-center">
+                  @if (!perfilAssociado(perfil)) {
+                    <button
+                      mat-fab
+                      matTooltip="Associar perfil"
+                      class="shadow-none bg-success icon-40"
+                      type="button"
+                      (click)="alterarAssociacao(perfil, true)"
+                      [disabled]="atualizando"
+                    >
+                      <i-tabler name="circle-check" class="text-white d-flex"></i-tabler>
+                    </button>
+                  }
+                  @if (perfilAssociado(perfil)) {
+                    <button
+                      mat-fab
+                      matTooltip="Desassociar perfil"
+                      class="shadow-none bg-warning icon-40"
+                      type="button"
+                      (click)="alterarAssociacao(perfil, false)"
+                      [disabled]="atualizando"
+                    >
+                      <i-tabler name="square-x" class="text-white d-flex"></i-tabler>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+            @if (!carregando && perfis.length === 0) {
+              <tr>
+                <td colspan="3" class="text-center"> Nenhum perfil encontrado. </td>
+              </tr>
+            }
+            @if (carregando) {
+              <tr>
+                <td colspan="3" class="text-center">Carregando...</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <mat-paginator
+        [length]="totalElements"
+        [pageIndex]="pageIndex"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10]"
+        [hidePageSize]="true"
+        (page)="paginar($event)"
+      >
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button
+    mat-stroked-button
+    class="admin-dialog-action"
+    type="button"
+    (click)="dialogRef.close(atualizou)"
+  >
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Fechar
+  </button>
+</mat-dialog-actions>

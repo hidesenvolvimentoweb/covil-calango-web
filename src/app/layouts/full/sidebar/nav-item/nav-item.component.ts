@@ -6,35 +6,38 @@ import {
   OnChanges,
   Output,
   ViewEncapsulation,
-} from '@angular/core';
-import { Router } from '@angular/router';
-import { NavService } from '../../../../services/nav.service';
-import { NavItem } from './nav-item';
+  inject,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+import { NavService } from "../../../../services/nav.service";
+import { NavItem } from "./nav-item";
 
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { TablerIconsModule } from 'angular-tabler-icons';
-import { MaterialModule } from 'src/app/material.module';
+import { TranslateModule } from "@ngx-translate/core";
+import { TablerIconsModule } from "angular-tabler-icons";
+import { MaterialModule } from "src/app/material.module";
 
 @Component({
-  selector: 'app-nav-item',
-  imports: [TranslateModule, TablerIconsModule, MaterialModule, CommonModule],
-  templateUrl: './nav-item.component.html',
-  styleUrls: ['./nav-item.component.scss'],
+  selector: "app-nav-item",
+  imports: [CommonModule, TranslateModule, TablerIconsModule, MaterialModule],
+  templateUrl: "./nav-item.component.html",
+  styleUrls: ["./nav-item.component.scss"],
   encapsulation: ViewEncapsulation.None,
 })
 export class AppNavItemComponent implements OnChanges {
-  @Output() notify: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() notificacoesLidas: EventEmitter<void> = new EventEmitter<void>();
+  public navService = inject(NavService);
+  public router = inject(Router);
 
-  @Input() item: NavItem | any;
-  @Input() notificacoesPendentes: number = 0;
+  @Output() public notify: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() public notificacoesLidas: EventEmitter<void> =
+    new EventEmitter<void>();
 
-  expanded: boolean = false;
-  @HostBinding('attr.aria-expanded') ariaExpanded = this.expanded;
-  @Input() depth: any;
+  @Input() public item: NavItem | any;
+  @Input() public notificacoesPendentes: number = 0;
 
-  constructor(public navService: NavService, public router: Router) {}
+  public expanded: boolean = false;
+  @HostBinding("attr.aria-expanded") public ariaExpanded = this.expanded;
+  @Input() public depth: any;
 
   ngOnChanges() {
     const url = this.navService.currentUrl();
@@ -48,7 +51,7 @@ export class AppNavItemComponent implements OnChanges {
     if (!item.children || !item.children.length) {
       this.router.navigate([item.route]);
 
-      if (item.displayName === 'Solicitações') {
+      if (item.displayName === "Solicitações") {
         this.notificacoesLidas.emit();
       }
     }
@@ -57,13 +60,10 @@ export class AppNavItemComponent implements OnChanges {
       this.expanded = !this.expanded;
     }
 
-    window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+    window.scroll({ top: 0, left: 0, behavior: "smooth" });
 
     if (!this.expanded && window.innerWidth < 1024) {
       this.notify.emit();
     }
   }
-
-
 }
-

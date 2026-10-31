@@ -1,9 +1,9 @@
-import { Routes } from '@angular/router';
-import { PedidosPage } from './pedidos.page';
+import { Routes } from "@angular/router";
+import { PedidosPage } from "./pedidos.page";
 
 export const PedidosRoutes: Routes = [
   {
-    path: 'listar',
+    path: "listar",
     component: PedidosPage,
-  }
+  },
 ];

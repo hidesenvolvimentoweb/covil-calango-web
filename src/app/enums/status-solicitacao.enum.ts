@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export enum StatusSolicitacaoEnum {
-  EM_ANALISE = 'EM_ANALISE',
-  ACEITA = 'ACEITA',
-  RECUSADA = 'RECUSADA'
+  EM_ANALISE = "EM_ANALISE",
+  ACEITA = "ACEITA",
+  RECUSADA = "RECUSADA",
 }
 
 export const fromStatusSolicitacaoEnumValue = (status: string): string => {
   switch (status) {
     case StatusSolicitacaoEnum.EM_ANALISE:
-      return 'Em Análise';
+      return "Em Análise";
     case StatusSolicitacaoEnum.ACEITA:
-      return 'Aceita';
+      return "Aceita";
     case StatusSolicitacaoEnum.RECUSADA:
-      return 'Recusada';
+      return "Recusada";
     default:
-      return '';
+      return "";
   }
 };

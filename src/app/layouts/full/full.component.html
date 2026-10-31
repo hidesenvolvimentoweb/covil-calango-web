@@ -1,44 +1,33 @@
-<mat-sidenav-container
-  class="mainWrapper blue_theme light-theme"
-  autosize
-  autoFocus
-  dir="ltr"
->
-  <mat-sidenav
-    #leftsidenav
-    [mode]="isOver ? 'over' : 'side'"
-    [opened]="!isOver"
-    class="sidebarNav"
-  >
+<mat-sidenav-container class="mainWrapper blue_theme light-theme" autosize autoFocus dir="ltr">
+  <mat-sidenav #leftsidenav [mode]="isOver ? 'over' : 'side'" [opened]="!isOver" class="sidebarNav">
     <div class="flex-layout">
-      <app-sidebar
-        (toggleMobileNav)="sidenav.toggle()"
-        [showToggle]="isOver"
-      ></app-sidebar>
+      <app-sidebar (toggleMobileNav)="sidenav.toggle()" [showToggle]="isOver"></app-sidebar>
       <div class="usuario">
-        <div class="bg-light-success d-flex justify-content-center align-items-center gap-4 rounded p-20">
-          <div>
-            <h5 class="f-s-16 f-w-600">
-              {{ userStateService.currentUser()?.nome }}
-              <!-- Adicionar Logout -->
-            </h5>
-          </div>
+        <div class="bg-light-success d-flex justify-content-center align-items-center rounded p-20">
+          <h5 class="f-s-16 f-w-600 m-0">
+            {{ userStateService.currentUser()?.nome }}
+          </h5>
+        </div>
+        <div class="bg-warning rounded m-t-8">
+          <button mat-flat-button class="bg-warning w-100" type="button" (click)="sair()">
+            <i-tabler name="logout" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+          </button>
         </div>
       </div>
       <ng-scrollbar class="position-relative" style="height: 100%">
         <mat-nav-list class="sidebar-list">
-          <app-nav-item
-            *ngFor="let item of navItems; trackBy: trackByItem"
-            [item]="item"
-            [notificacoesPendentes]="
-              item.displayName === 'Solicitações' ? notificacoesPendentes : 0
-            "
-            (notificacoesLidas)="resetNotificacoes()"
-          >
-          </app-nav-item>
+          @for (item of navItems; track trackByItem($index, item)) {
+            <app-nav-item
+              [item]="item"
+              [notificacoesPendentes]="
+                item.displayName === 'Solicitações' ? notificacoesPendentes : 0
+              "
+              (notificacoesLidas)="resetNotificacoes()"
+            >
+            </app-nav-item>
+          }
         </mat-nav-list>
       </ng-scrollbar>
-
     </div>
   </mat-sidenav>
 

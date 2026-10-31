@@ -1,14 +1,15 @@
-import { Injectable, signal } from '@angular/core';
-import { UsuarioDTO } from '../model/usuario.dto';
+import { Injectable, signal } from "@angular/core";
+import { UsuarioDTO } from "../model/usuario.dto";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class UserStateService {
+  public get currentUser() {
+    return this._currentUser.asReadonly();
+  }
 
   private readonly _currentUser = signal<UsuarioDTO | null>(null);
-  public readonly currentUser = this._currentUser.asReadonly();
+  private readonly STORAGE_KEY = "currentUser";
 
-  private readonly STORAGE_KEY = 'currentUser';
-  
   constructor() {
     this.loadStateFromStorage();
   }
@@ -23,7 +24,19 @@ export class UserStateService {
   }
 
   hasPermission(permission: string): boolean {
-    return this.currentUser()?.perfis?.some(perfil => perfil.permissoes?.includes(permission)) ?? false;
+    return (
+      this.currentUser()?.perfis?.some((perfil) =>
+        perfil.permissoes?.includes(permission),
+      ) ?? false
+    );
+  }
+
+  hasProfile(profileName: string): boolean {
+    return (
+      this.currentUser()?.perfis?.some(
+        (perfil) => perfil.name === profileName,
+      ) ?? false
+    );
   }
 
   clearUser(): void {
@@ -45,7 +58,10 @@ export class UserStateService {
       try {
         this._currentUser.set(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Erro ao carregar estado do usuário do localStorage', error);
+        console.error(
+          "Erro ao carregar estado do usuário do localStorage",
+          error,
+        );
         this.clearStateFromStorage();
       }
     }

@@ -1,0 +1,52 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="user" class="icon-24 text-success"></i-tabler>
+  <span>{{ data.id ? "Alterar usuário" : "Cadastrar usuário" }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <form [formGroup]="form" id="usuario-form" (ngSubmit)="salvar()" class="admin-dialog-form">
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" maxlength="255" />
+      @if (form.get("nome")?.hasError("required")) {
+        <mat-error>Informe o nome.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>E-mail</mat-label>
+      <input matInput type="email" formControlName="email" maxlength="255" />
+      @if (form.get("email")?.hasError("required")) {
+        <mat-error>Informe o e-mail.</mat-error>
+      }
+      @if (form.get("email")?.hasError("email")) {
+        <mat-error>Informe um e-mail válido.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Contato</mat-label>
+      <input matInput formControlName="contato" maxlength="255" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>{{ data.id ? "Nova senha (opcional)" : "Senha" }}</mat-label>
+      <input matInput type="password" formControlName="password" />
+      @if (form.get("password")?.hasError("required")) {
+        <mat-error>Informe a senha.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    class="bg-success text-white admin-dialog-action"
+    type="submit"
+    form="usuario-form"
+    [disabled]="form.invalid || salvando"
+  >
+    <i-tabler name="device-floppy" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    {{ data.id ? "Salvar alterações" : "Cadastrar" }}
+  </button>
+</mat-dialog-actions>
