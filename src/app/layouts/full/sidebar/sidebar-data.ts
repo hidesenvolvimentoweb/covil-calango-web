@@ -54,4 +54,18 @@ export const navItems: NavItem[] = [
     permission: "web-manter-usuarios",
     bgcolor: "success",
   },
+  {
+    displayName: "Produtos",
+    iconName: "shopping-bag",
+    route: "/admin/produtos",
+    permission: "web-manter-produtos",
+    bgcolor: "success",
+  },
+  {
+    displayName: "Parâmetros",
+    iconName: "adjustments",
+    route: "/admin/parametros",
+    permission: "web-manter-produtos",
+    bgcolor: "success",
+  },
 ];
