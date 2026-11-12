@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -7,9 +7,19 @@ import {
 } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TablerIconsModule } from "angular-tabler-icons";
+import { Observable, of, switchMap } from "rxjs";
 import { MaterialModule } from "src/app/material.module";
+import {
+  ParametroDTO,
+  TIPOS_PARAMETRO,
+  TipoParametro,
+} from "src/app/model/parametro.dto";
 import { AlertService } from "src/app/services/alert.service";
 import { ParametroApiService } from "src/app/services/http-services/parametro.service";
+import { resolverUrlImagem } from "src/app/utils/imagem.util";
+
+const TAMANHO_MAXIMO_IMAGEM = 5 * 1024 * 1024;
+const TIPOS_IMAGEM_ACEITOS = ["image/jpeg", "image/png", "image/webp"];
 
 @Component({
   selector: "app-parametro-form-modal",
@@ -17,21 +27,37 @@ import { ParametroApiService } from "src/app/services/http-services/parametro.se
   imports: [ReactiveFormsModule, MaterialModule, TablerIconsModule],
   templateUrl: "./parametro-form.modal.html",
 })
-export class ParametroFormModal implements OnInit {
+export class ParametroFormModal implements OnInit, OnDestroy {
   public data = inject<{ id?: number }>(MAT_DIALOG_DATA);
   public dialogRef = inject<MatDialogRef<ParametroFormModal>>(MatDialogRef);
   private formBuilder = inject(FormBuilder);
   private parametroService = inject(ParametroApiService);
   private alertService = inject(AlertService);
 
+  public readonly tipos = TIPOS_PARAMETRO;
+  public readonly tiposAceitos = TIPOS_IMAGEM_ACEITOS.join(",");
   public salvando = false;
   public form: FormGroup;
+  /** URL exibida na pré-visualização (imagem já salva ou arquivo recém-selecionado). */
+  public previewImagem: string | null = null;
+
+  private arquivoImagem?: File;
+  private possuiImagemSalva = false;
+  private removerImagemSalva = false;
+  private previewLocal?: string;
+  /** Depois de gravado, novas tentativas apenas reenviam a imagem. */
+  private parametroIdSalvo?: number;
 
   constructor() {
     this.form = this.formBuilder.nonNullable.group({
       nome: ["", Validators.required],
+      tipo: ["TEXTO" as TipoParametro],
       descricao: [""],
     });
+  }
+
+  get tipo(): TipoParametro {
+    return this.form.get("tipo")?.value ?? "TEXTO";
   }
 
   ngOnInit(): void {
@@ -39,7 +65,18 @@ export class ParametroFormModal implements OnInit {
       return;
     }
     this.parametroService.getParametroById(this.data.id).subscribe({
-      next: (parametro) => this.form.patchValue(parametro),
+      next: (parametro) => {
+        const tipo = parametro.tipo ?? "TEXTO";
+        this.form.patchValue({
+          nome: parametro.nome,
+          tipo,
+          descricao: tipo === "IMAGEM" ? "" : (parametro.descricao ?? ""),
+        });
+        if (tipo === "IMAGEM") {
+          this.previewImagem = resolverUrlImagem(parametro.descricao);
+          this.possuiImagemSalva = !!this.previewImagem;
+        }
+      },
       error: (error) => {
         this.alertService.showError(
           "Erro",
@@ -50,6 +87,43 @@ export class ParametroFormModal implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.liberarPreviewLocal();
+  }
+
+  selecionarImagem(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const arquivo = input.files?.[0];
+    // Permite selecionar o mesmo arquivo novamente depois de removê-lo.
+    input.value = "";
+    if (!arquivo) {
+      return;
+    }
+    if (!TIPOS_IMAGEM_ACEITOS.includes(arquivo.type)) {
+      this.alertService.showError(
+        "Erro",
+        "Formato de imagem inválido. Envie um arquivo JPG, PNG ou WebP.",
+      );
+      return;
+    }
+    if (arquivo.size > TAMANHO_MAXIMO_IMAGEM) {
+      this.alertService.showError("Erro", "A imagem deve ter no máximo 5 MB.");
+      return;
+    }
+    this.liberarPreviewLocal();
+    this.arquivoImagem = arquivo;
+    this.removerImagemSalva = false;
+    this.previewLocal = URL.createObjectURL(arquivo);
+    this.previewImagem = this.previewLocal;
+  }
+
+  removerImagem(): void {
+    this.liberarPreviewLocal();
+    this.arquivoImagem = undefined;
+    this.previewImagem = null;
+    this.removerImagemSalva = this.possuiImagemSalva;
+  }
+
   salvar(): void {
     if (this.form.invalid || this.salvando) {
       this.form.markAllAsTouched();
@@ -57,23 +131,59 @@ export class ParametroFormModal implements OnInit {
     }
     this.salvando = true;
     const value = this.form.getRawValue();
+    const tipo: TipoParametro = value.tipo;
     const request = {
       nome: String(value.nome).trim(),
-      descricao: String(value.descricao).trim() || undefined,
+      tipo,
+      descricao:
+        tipo === "IMAGEM"
+          ? undefined
+          : String(value.descricao).trim() || undefined,
     };
+    const id = this.parametroIdSalvo ?? this.data.id;
     const request$ =
-      this.data.id == null
+      id == null
         ? this.parametroService.create(request)
-        : this.parametroService.update(this.data.id, request);
-    request$.subscribe({
-      next: () => this.dialogRef.close(true),
-      error: (error) => {
-        this.salvando = false;
-        this.alertService.showError(
-          "Erro",
-          error.error?.message ?? "Não foi possível salvar o parâmetro.",
-        );
-      },
-    });
+        : this.parametroService.update(id, request);
+    request$
+      .pipe(
+        switchMap((parametro) => {
+          this.parametroIdSalvo = parametro.id;
+          return this.sincronizarImagem(parametro);
+        }),
+      )
+      .subscribe({
+        next: () => this.dialogRef.close(true),
+        error: (error) => {
+          this.salvando = false;
+          this.alertService.showError(
+            "Erro",
+            error.error?.message ??
+              (this.parametroIdSalvo != null
+                ? "O parâmetro foi salvo, mas não foi possível enviar a imagem."
+                : "Não foi possível salvar o parâmetro."),
+          );
+        },
+      });
+  }
+
+  private sincronizarImagem(parametro: ParametroDTO): Observable<ParametroDTO> {
+    if (parametro.tipo !== "IMAGEM") {
+      return of(parametro);
+    }
+    if (this.arquivoImagem) {
+      return this.parametroService.uploadImagem(parametro.id!, this.arquivoImagem);
+    }
+    if (this.removerImagemSalva) {
+      return this.parametroService.removerImagem(parametro.id!);
+    }
+    return of(parametro);
+  }
+
+  private liberarPreviewLocal(): void {
+    if (this.previewLocal) {
+      URL.revokeObjectURL(this.previewLocal);
+      this.previewLocal = undefined;
+    }
   }
 }

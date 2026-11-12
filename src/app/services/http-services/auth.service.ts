@@ -16,4 +16,23 @@ export class AuthService {
       body,
     );
   }
+
+  /** Pede à API para apagar o cookie de sessão (HttpOnly, inacessível ao JavaScript). */
+  logout() {
+    return this.httpClient.post<void>(`${this.urlController}/logout`, {});
+  }
+
+  esqueciSenha(email: string) {
+    return this.httpClient.post<void>(`${this.urlController}/esqueci-senha`, {
+      email,
+    });
+  }
+
+  redefinirSenha(token: string, password: string, senhaTemporaria?: string) {
+    return this.httpClient.post<void>(`${this.urlController}/redefinir-senha`, {
+      token,
+      password,
+      senhaTemporaria,
+    });
+  }
 }

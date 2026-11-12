@@ -34,12 +34,19 @@ export class DetalharComandaModal {
       "Alerta!",
       "Tem certeza que deseja fechar a comanda?",
       () => {
-        this.comandaService.fecharComanda(this.comanda.numero).subscribe(() => {
-          this.alertService.showToast(
-            "Sucesso!",
-            `Comanda ${this.comanda.numero} fechada com sucesso!`,
-          );
-          this.close(true);
+        this.comandaService.fecharComanda(this.comanda.numero).subscribe({
+          next: () => {
+            this.alertService.showToast(
+              "Sucesso!",
+              `Comanda ${this.comanda.numero} fechada com sucesso!`,
+            );
+            this.close(true);
+          },
+          error: (error) =>
+            this.alertService.showError(
+              "Erro",
+              error.error?.message ?? "Não foi possível fechar a comanda.",
+            ),
         });
       },
     );

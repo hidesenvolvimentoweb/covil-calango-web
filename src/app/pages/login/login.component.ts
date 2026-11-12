@@ -14,6 +14,8 @@ import { TipoProviderAuthEnum } from "src/app/enums/tipo-provider-auth.enum";
 import { SocialUser } from "angularx-social-login";
 import { UserStateService } from "src/app/services/user.service";
 import { UsuarioDTO } from "src/app/model/usuario.dto";
+import { AlertService } from "src/app/services/alert.service";
+import { APP_VERSION } from "src/app/utils/app-version";
 
 @Component({
   selector: "app-login",
@@ -33,6 +35,9 @@ export class LoginComponent implements OnInit {
   private googleSigninService = inject(SocialAuthService);
   private authService = inject(AuthService);
   private userStateService = inject(UserStateService);
+  private alertService = inject(AlertService);
+
+  public readonly version = APP_VERSION;
 
   public form = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.minLength(6)]),
@@ -53,7 +58,10 @@ export class LoginComponent implements OnInit {
         idToken: user.idToken,
         provider: TipoProviderAuthEnum.GOOGLE,
       })
-      .subscribe((res) => this.mapearRetorno(res));
+      .subscribe({
+        next: (res) => this.mapearRetorno(res),
+        error: (error) => this.mostrarErroLogin(error),
+      });
   }
 
   loginCredentials() {
@@ -64,8 +72,18 @@ export class LoginComponent implements OnInit {
           senha: this.form.get("senha")?.value!,
           provider: TipoProviderAuthEnum.CREDENTIAL,
         })
-        .subscribe((res) => this.mapearRetorno(res));
+        .subscribe({
+          next: (res) => this.mapearRetorno(res),
+          error: (error) => this.mostrarErroLogin(error),
+        });
     }
+  }
+
+  private mostrarErroLogin(error: any) {
+    this.alertService.showError(
+      "Erro",
+      error.error?.message ?? "Não foi possível entrar. Tente novamente.",
+    );
   }
 
   mapearRetorno(res: UsuarioDTO) {

@@ -66,6 +66,27 @@ export const routes: Routes = [
         component: LoginComponent,
         // canActivate: [NoAuthGuard]
       },
+      {
+        path: "cadastro",
+        loadComponent: () =>
+          import("./pages/cadastro/cadastro.component").then(
+            (m) => m.CadastroComponent,
+          ),
+      },
+      {
+        path: "esqueci-senha",
+        loadComponent: () =>
+          import("./pages/esqueci-senha/esqueci-senha.component").then(
+            (m) => m.EsqueciSenhaComponent,
+          ),
+      },
+      {
+        path: "redefinir-senha",
+        loadComponent: () =>
+          import("./pages/redefinir-senha/redefinir-senha.component").then(
+            (m) => m.RedefinirSenhaComponent,
+          ),
+      },
     ],
   },
   {

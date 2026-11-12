@@ -41,6 +41,13 @@ export const navItems: NavItem[] = [
     bgcolor: "success",
   },
   {
+    displayName: "Finalizar Cadastro",
+    iconName: "user-check",
+    route: "/admin/finalizar-cadastro",
+    permission: "web-manter-usuarios",
+    bgcolor: "success",
+  },
+  {
     displayName: "Perfis",
     iconName: "id-badge-2",
     route: "/admin/perfis",

@@ -62,7 +62,21 @@
               @for (parametro of parametros; track parametro.id) {
                 <tr>
                   <td>{{ parametro.nome }}</td>
-                  <td>{{ parametro.descricao || "—" }}</td>
+                  <td class="admin-parametro-descricao">
+                    @if (parametro.tipo === "IMAGEM") {
+                      <span class="admin-table-thumb bg-light-success text-success">
+                        @if (urlImagem(parametro); as url) {
+                          <img [src]="url" [alt]="parametro.nome" loading="lazy" />
+                        } @else {
+                          <i-tabler name="photo" class="icon-20 d-flex"></i-tabler>
+                        }
+                      </span>
+                    } @else {
+                      <span [matTooltip]="parametro.tipo === 'TEXTO_LONGO' ? '' : (parametro.descricao ?? '')">
+                        {{ resumo(parametro.descricao) }}
+                      </span>
+                    }
+                  </td>
                   <td class="text-center">
                     <button
                       mat-fab

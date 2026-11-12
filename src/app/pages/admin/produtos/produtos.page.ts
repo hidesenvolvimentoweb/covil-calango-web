@@ -8,6 +8,7 @@ import { MaterialModule } from "src/app/material.module";
 import { ProdutoDTO } from "src/app/model/produtos.dto";
 import { AlertService } from "src/app/services/alert.service";
 import { ProdutoApiService } from "src/app/services/http-services/produto.service";
+import { resolverUrlImagem } from "src/app/utils/imagem.util";
 import { ProdutoFormModal } from "./produto-form.modal";
 
 @Component({
@@ -98,6 +99,10 @@ export class ProdutosPage implements OnInit {
     if (produto.id != null) {
       this.abrirModal(produto.id);
     }
+  }
+
+  urlImagem(produto: ProdutoDTO): string | null {
+    return resolverUrlImagem(produto.imagem);
   }
 
   excluir(produto: ProdutoDTO): void {

@@ -21,6 +21,21 @@ export class ProdutoApiService extends AbstractGenericClass {
     );
   }
 
+  uploadImagem(id: number, arquivo: File) {
+    const formData = new FormData();
+    formData.append("file", arquivo);
+    return this.httpClient.post<ProdutoDTO>(
+      `${this.urlController}/${id}/imagem`,
+      formData,
+    );
+  }
+
+  removerImagem(id: number) {
+    return this.httpClient.delete<ProdutoDTO>(
+      `${this.urlController}/${id}/imagem`,
+    );
+  }
+
   deleteById(id: number) {
     return this.httpClient.delete<void>(`${this.urlController}/${id}`);
   }

@@ -18,6 +18,8 @@ import { NgScrollbarModule } from "ngx-scrollbar";
 import { MaterialModule } from "./material.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { httpLoadingInterceptor } from "./interceptors/http-loading-interceptor";
+import { httpErrorInterceptor } from "./interceptors/http-error-interceptor";
+import { httpAuthInterceptor } from "./interceptors/http-auth-interceptor";
 import { socialAuthServiceConfig } from "./config";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { PortuguesePaginatorIntl } from "./services/portuguese-paginator-intl";
@@ -34,7 +36,7 @@ export const appConfig: ApplicationConfig = {
       }),
       withComponentInputBinding(),
     ),
-    provideHttpClient(withInterceptors([httpLoadingInterceptor])),
+    provideHttpClient(withInterceptors([httpLoadingInterceptor, httpAuthInterceptor, httpErrorInterceptor])),
     provideClientHydration(),
     provideAnimationsAsync(),
     importProvidersFrom(

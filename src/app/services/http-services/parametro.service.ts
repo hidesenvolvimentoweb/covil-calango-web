@@ -21,6 +21,21 @@ export class ParametroApiService extends AbstractGenericClass {
     );
   }
 
+  uploadImagem(id: number, arquivo: File) {
+    const formData = new FormData();
+    formData.append("file", arquivo);
+    return this.httpClient.post<ParametroDTO>(
+      `${this.urlController}/${id}/imagem`,
+      formData,
+    );
+  }
+
+  removerImagem(id: number) {
+    return this.httpClient.delete<ParametroDTO>(
+      `${this.urlController}/${id}/imagem`,
+    );
+  }
+
   deleteById(id: number) {
     return this.httpClient.delete<void>(`${this.urlController}/${id}`);
   }

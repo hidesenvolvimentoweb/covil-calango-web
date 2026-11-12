@@ -60,17 +60,24 @@ export class ComandasPage implements OnInit {
   }
 
   abrirModalDetalharComanda(comanda: ComandaDTO) {
-    this.comandaService.getByNumero(comanda.numero).subscribe((res) => {
-      const modalRef = this.modalService.open(DetalharComandaModal, {
-        animation: true,
-        size: "lg",
-      });
-      modalRef.componentInstance.comanda = res;
-      modalRef.result.then((r) => {
-        if (r) {
-          this.obterComandasAbertas();
-        }
-      });
+    this.comandaService.getByNumero(comanda.numero).subscribe({
+      next: (res) => {
+        const modalRef = this.modalService.open(DetalharComandaModal, {
+          animation: true,
+          size: "lg",
+        });
+        modalRef.componentInstance.comanda = res;
+        modalRef.result.then((r) => {
+          if (r) {
+            this.obterComandasAbertas();
+          }
+        });
+      },
+      error: (error) =>
+        this.alertService.showError(
+          "Erro",
+          error.error?.message ?? "Não foi possível carregar a comanda.",
+        ),
     });
   }
 
@@ -79,12 +86,19 @@ export class ComandasPage implements OnInit {
       "Alerta!",
       "Tem certeza que deseja fechar a comanda?",
       () => {
-        this.comandaService.fecharComanda(comanda.numero).subscribe(() => {
-          this.alertService.showSuccess(
-            "Sucesso!",
-            `Comanda ${comanda.numero} fechada com sucesso!`,
-          );
-          this.obterComandasAbertas();
+        this.comandaService.fecharComanda(comanda.numero).subscribe({
+          next: () => {
+            this.alertService.showSuccess(
+              "Sucesso!",
+              `Comanda ${comanda.numero} fechada com sucesso!`,
+            );
+            this.obterComandasAbertas();
+          },
+          error: (error) =>
+            this.alertService.showError(
+              "Erro",
+              error.error?.message ?? "Não foi possível fechar a comanda.",
+            ),
         });
       },
     );

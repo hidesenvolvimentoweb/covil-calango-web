@@ -82,11 +82,20 @@ export class PedidosPage implements OnInit {
     return params;
   }
 
+  private mostrarErro(error: any) {
+    this.alertService.showError(
+      "Erro",
+      error.error?.message ?? "Não foi possível atualizar o pedido.",
+    );
+  }
+
   aceitarPedido(pedido: PedidoDTO) {
-    this.pedidoService.aceitarPedido(pedido.id!).subscribe(() => {
-      this.carregarPedidos().then(() =>
-        this.alertService.showToast("Pedido Aceito!"),
-      );
+    this.pedidoService.aceitarPedido(pedido.id!).subscribe({
+      next: () =>
+        this.carregarPedidos().then(() =>
+          this.alertService.showToast("Pedido Aceito!"),
+        ),
+      error: (error) => this.mostrarErro(error),
     });
   }
 
@@ -95,28 +104,34 @@ export class PedidosPage implements OnInit {
       "Alerta!",
       "Tem certeza que deseja cancelar o pedido?",
       () => {
-        this.pedidoService.cancelarPedido(pedido.id!).subscribe(() => {
-          this.carregarPedidos().then(() =>
-            this.alertService.showToast("Pedido Cancelado!", "warning"),
-          );
+        this.pedidoService.cancelarPedido(pedido.id!).subscribe({
+          next: () =>
+            this.carregarPedidos().then(() =>
+              this.alertService.showToast("Pedido Cancelado!", "warning"),
+            ),
+          error: (error) => this.mostrarErro(error),
         });
       },
     );
   }
 
   concluirPedido(pedido: PedidoDTO) {
-    this.pedidoService.concluirPedido(pedido.id!).subscribe(() => {
-      this.carregarPedidos().then(() =>
-        this.alertService.showToast("Pedido Pronto!"),
-      );
+    this.pedidoService.concluirPedido(pedido.id!).subscribe({
+      next: () =>
+        this.carregarPedidos().then(() =>
+          this.alertService.showToast("Pedido Pronto!"),
+        ),
+      error: (error) => this.mostrarErro(error),
     });
   }
 
   finalizarPedido(pedido: PedidoDTO) {
-    this.pedidoService.finalizarPedido(pedido.id!).subscribe(() => {
-      this.carregarPedidos().then(() =>
-        this.alertService.showToast("Pedido Finalizado!"),
-      );
+    this.pedidoService.finalizarPedido(pedido.id!).subscribe({
+      next: () =>
+        this.carregarPedidos().then(() =>
+          this.alertService.showToast("Pedido Finalizado!"),
+        ),
+      error: (error) => this.mostrarErro(error),
     });
   }
 }

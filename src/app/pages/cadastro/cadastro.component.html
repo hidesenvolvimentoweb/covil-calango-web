@@ -1,0 +1,93 @@
+<div class="blank-layout-container justify-content-center align-items-center bg-light">
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center p-b-30">
+            <a routerLink="/login">
+              <img
+                src="./assets/images/covil-calango-logo.jpg"
+                class="logo align-middle m-2"
+                alt="logo"
+              />
+            </a>
+          </div>
+
+          @if (!emailSolicitado) {
+            <div class="text-center">
+              <h2 class="f-s-20 f-w-600 m-0">Solicitar cadastro</h2>
+              <p class="auth-subtitle m-t-8 m-b-0">
+                Preencha os seus dados. Quando um administrador aprovar o seu cadastro, você
+                receberá um e-mail para criar a sua senha de acesso.
+              </p>
+            </div>
+
+            <form [formGroup]="form" class="m-t-30" (ngSubmit)="solicitar()">
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Nome</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input formControlName="nome" matInput maxlength="255" autocomplete="name" />
+                @if (form.get("nome")?.hasError("required")) {
+                  <mat-error>Informe o nome.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input
+                  formControlName="email"
+                  matInput
+                  type="email"
+                  maxlength="255"
+                  autocomplete="email"
+                />
+                @if (form.get("email")?.hasError("required")) {
+                  <mat-error>Informe o e-mail.</mat-error>
+                }
+                @if (form.get("email")?.hasError("email")) {
+                  <mat-error>Informe um e-mail válido.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Contato (opcional)</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input formControlName="contato" matInput maxlength="255" autocomplete="tel" />
+              </mat-form-field>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="w-100"
+                type="submit"
+                [disabled]="salvando"
+              >
+                Solicitar cadastro
+              </button>
+            </form>
+
+            <div class="auth-links m-t-24">
+              <p>
+                Já possui cadastro?
+                <a routerLink="/login" class="auth-link">Entrar</a>
+              </p>
+            </div>
+          } @else {
+            <div class="auth-feedback">
+              <span class="auth-feedback-icon bg-light-success text-success">
+                <i-tabler name="circle-check" class="icon-32 d-flex"></i-tabler>
+              </span>
+              <h2 class="f-s-20 f-w-600 m-0">Solicitação enviada!</h2>
+              <p class="auth-subtitle m-0">
+                O seu cadastro será avaliado por um administrador. Quando for aprovado, enviaremos
+                para <strong>{{ emailSolicitado }}</strong> uma senha temporária e o link para você
+                criar a sua senha de acesso.
+              </p>
+              <a mat-flat-button color="primary" class="w-100 m-t-8" routerLink="/login">
+                Voltar para o login
+              </a>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

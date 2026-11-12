@@ -27,13 +27,51 @@
       <input matInput type="number" min="0" step="1" formControlName="prazo" />
     </mat-form-field>
     <mat-form-field appearance="outline" class="w-100 admin-filter-field">
-      <mat-label>Imagem (URL ou caminho)</mat-label>
-      <input matInput formControlName="imagem" maxlength="255" />
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
       <mat-label>Ingredientes</mat-label>
       <textarea matInput formControlName="ingredientes" maxlength="255" rows="3"></textarea>
     </mat-form-field>
+    <div class="admin-image-upload">
+      <div class="admin-image-preview">
+        @if (previewImagem) {
+          <img [src]="previewImagem" alt="Imagem do produto" />
+        } @else {
+          <i-tabler name="photo" class="icon-32 d-flex"></i-tabler>
+        }
+      </div>
+      <div class="admin-image-upload-info">
+        <span class="f-s-14 f-w-600">Imagem do produto</span>
+        <span class="f-s-12">JPG, PNG ou WebP com até 5 MB.</span>
+        <div class="d-flex flex-wrap align-items-center gap-3 m-t-8">
+          <input
+            #inputImagem
+            type="file"
+            hidden
+            [accept]="tiposAceitos"
+            (change)="selecionarImagem($event)"
+          />
+          <button
+            mat-stroked-button
+            class="admin-dialog-action"
+            type="button"
+            (click)="inputImagem.click()"
+          >
+            <i-tabler name="upload" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+            {{ previewImagem ? "Trocar imagem" : "Selecionar imagem" }}
+          </button>
+          @if (previewImagem) {
+            <button
+              mat-stroked-button
+              class="admin-dialog-action"
+              type="button"
+              (click)="removerImagem()"
+            >
+              <i-tabler name="trash" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+              Remover
+            </button>
+          }
+        </div>
+      </div>
+    </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end" class="admin-dialog-actions">

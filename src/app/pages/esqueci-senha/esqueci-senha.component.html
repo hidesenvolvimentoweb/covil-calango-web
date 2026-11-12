@@ -1,0 +1,79 @@
+<div class="blank-layout-container justify-content-center align-items-center bg-light">
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center p-b-30">
+            <a routerLink="/login">
+              <img
+                src="./assets/images/covil-calango-logo.jpg"
+                class="logo align-middle m-2"
+                alt="logo"
+              />
+            </a>
+          </div>
+
+          @if (!emailEnviado) {
+            <div class="text-center">
+              <h2 class="f-s-20 f-w-600 m-0">Esqueceu a senha?</h2>
+              <p class="auth-subtitle m-t-8 m-b-0">
+                Informe o e-mail do seu cadastro e enviaremos um link para você criar uma nova
+                senha.
+              </p>
+            </div>
+
+            <form [formGroup]="form" class="m-t-30" (ngSubmit)="enviar()">
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input
+                  formControlName="email"
+                  matInput
+                  type="email"
+                  maxlength="255"
+                  autocomplete="email"
+                />
+                @if (form.get("email")?.hasError("required")) {
+                  <mat-error>Informe o e-mail.</mat-error>
+                }
+                @if (form.get("email")?.hasError("email")) {
+                  <mat-error>Informe um e-mail válido.</mat-error>
+                }
+              </mat-form-field>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="w-100"
+                type="submit"
+                [disabled]="enviando"
+              >
+                Enviar link de recuperação
+              </button>
+            </form>
+
+            <div class="auth-links m-t-24">
+              <p>
+                Lembrou a senha?
+                <a routerLink="/login" class="auth-link">Entrar</a>
+              </p>
+            </div>
+          } @else {
+            <div class="auth-feedback">
+              <span class="auth-feedback-icon bg-light-success text-success">
+                <i-tabler name="mail-check" class="icon-32 d-flex"></i-tabler>
+              </span>
+              <h2 class="f-s-20 f-w-600 m-0">Verifique o seu e-mail</h2>
+              <p class="auth-subtitle m-0">
+                Se existir um cadastro para <strong>{{ emailEnviado }}</strong>, você receberá em
+                instantes um link para redefinir a sua senha.
+              </p>
+              <a mat-flat-button color="primary" class="w-100 m-t-8" routerLink="/login">
+                Voltar para o login
+              </a>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

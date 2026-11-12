@@ -1,0 +1,127 @@
+<div class="blank-layout-container justify-content-center align-items-center bg-light">
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center p-b-30">
+            <a routerLink="/login">
+              <img
+                src="./assets/images/covil-calango-logo.jpg"
+                class="logo align-middle m-2"
+                alt="logo"
+              />
+            </a>
+          </div>
+
+          @if (senhaAlterada) {
+            <div class="auth-feedback">
+              <span class="auth-feedback-icon bg-light-success text-success">
+                <i-tabler name="lock-check" class="icon-32 d-flex"></i-tabler>
+              </span>
+              <h2 class="f-s-20 f-w-600 m-0">
+                {{ primeiroAcesso ? "Senha criada!" : "Senha alterada!" }}
+              </h2>
+              <p class="auth-subtitle m-0">Você já pode entrar no sistema com a sua nova senha.</p>
+              <a mat-flat-button color="primary" class="w-100 m-t-8" routerLink="/login">
+                Ir para o login
+              </a>
+            </div>
+          } @else if (!token) {
+            <div class="auth-feedback">
+              <span class="auth-feedback-icon bg-light-error text-error">
+                <i-tabler name="alert-circle" class="icon-32 d-flex"></i-tabler>
+              </span>
+              <h2 class="f-s-20 f-w-600 m-0">Link inválido</h2>
+              <p class="auth-subtitle m-0">
+                Este link de troca de senha é inválido. Solicite um novo link.
+              </p>
+              <a mat-flat-button color="primary" class="w-100 m-t-8" routerLink="/esqueci-senha">
+                Solicitar novo link
+              </a>
+            </div>
+          } @else {
+            <div class="text-center">
+              <h2 class="f-s-20 f-w-600 m-0">
+                {{ primeiroAcesso ? "Criar senha de acesso" : "Redefinir senha" }}
+              </h2>
+              <p class="auth-subtitle m-t-8 m-b-0">
+                @if (primeiroAcesso) {
+                  Informe a senha temporária que você recebeu por e-mail e crie a sua nova senha.
+                } @else {
+                  Informe e confirme a sua nova senha.
+                }
+              </p>
+            </div>
+
+            <form [formGroup]="form" class="m-t-30" (ngSubmit)="salvar()">
+              @if (primeiroAcesso) {
+                <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Senha temporária</mat-label>
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <input
+                    formControlName="senhaTemporaria"
+                    matInput
+                    type="password"
+                    autocomplete="off"
+                  />
+                  @if (form.get("senhaTemporaria")?.hasError("required")) {
+                    <mat-error>Informe a senha temporária.</mat-error>
+                  }
+                </mat-form-field>
+              }
+
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Nova senha</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input
+                  formControlName="password"
+                  matInput
+                  type="password"
+                  autocomplete="new-password"
+                />
+                @if (form.get("password")?.hasError("required")) {
+                  <mat-error>Informe a nova senha.</mat-error>
+                }
+                @if (form.get("password")?.hasError("minlength")) {
+                  <mat-error>
+                    A senha deve possuir ao menos {{ tamanhoMinimoSenha }} caracteres.
+                  </mat-error>
+                }
+              </mat-form-field>
+
+              <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Confirmar nova senha</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input
+                  formControlName="confirmarSenha"
+                  matInput
+                  type="password"
+                  autocomplete="new-password"
+                />
+                @if (form.get("confirmarSenha")?.hasError("required")) {
+                  <mat-error>Confirme a nova senha.</mat-error>
+                } @else if (form.get("confirmarSenha")?.hasError("senhasDiferentes")) {
+                  <mat-error>As senhas não conferem.</mat-error>
+                }
+              </mat-form-field>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="w-100"
+                type="submit"
+                [disabled]="salvando"
+              >
+                {{ primeiroAcesso ? "Criar senha" : "Alterar senha" }}
+              </button>
+            </form>
+
+            <div class="auth-links m-t-24">
+              <p>
+                Lembrou a senha?
+                <a routerLink="/login" class="auth-link">Entrar</a>
+              </p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

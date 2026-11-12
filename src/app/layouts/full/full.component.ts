@@ -23,6 +23,8 @@ import { UsuarioDTO } from "src/app/model/usuario.dto";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { NavItem } from "./sidebar/nav-item/nav-item";
 import { AlertService } from "src/app/services/alert.service";
+import { AuthService } from "src/app/services/http-services/auth.service";
+import { APP_VERSION } from "src/app/utils/app-version";
 
 const MOBILE_VIEW = "screen and (max-width: 768px)";
 const TABLET_VIEW = "screen and (min-width: 769px) and (max-width: 1024px)";
@@ -48,6 +50,7 @@ export class FullComponent {
   public userStateService = inject(UserStateService);
   private websocketService = inject(WebsocketService);
   private alertService = inject(AlertService);
+  private authService = inject(AuthService);
 
   @ViewChild("leftsidenav")
   public sidenav: MatSidenav;
@@ -59,6 +62,7 @@ export class FullComponent {
   public resView = false;
   public options = this.settings.getOptions();
   public notificacoesPendentes = 0;
+  public readonly version = APP_VERSION;
   private layoutChangesSubscription = Subscription.EMPTY;
   private isMobileScreen = false;
 
@@ -126,6 +130,8 @@ export class FullComponent {
       "Sair",
       "Deseja realmente encerrar sua sessão?",
       () => {
+        // Encerra a sessão local mesmo se a API não responder; o cookie expira sozinho.
+        this.authService.logout().subscribe({ error: () => undefined });
         this.userStateService.clearUser();
         this.websocketService.disconnect();
         void this.router.navigate(["/login"]);

@@ -1,0 +1,56 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="user-check" class="icon-24 text-success"></i-tabler>
+  <span>Finalizar cadastro</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <form
+    [formGroup]="form"
+    id="finalizar-cadastro-form"
+    (ngSubmit)="salvar()"
+    class="admin-dialog-form"
+  >
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Nome</mat-label>
+      <input matInput [value]="data.solicitacao.nome" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>E-mail</mat-label>
+      <input matInput [value]="data.solicitacao.email" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Contato</mat-label>
+      <input matInput [value]="data.solicitacao.contato || '—'" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Perfil inicial</mat-label>
+      <mat-select formControlName="perfilId">
+        @for (perfil of perfis; track perfil.id) {
+          <mat-option [value]="perfil.id">{{ perfil.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get("perfilId")?.hasError("required")) {
+        <mat-error>Selecione o perfil inicial.</mat-error>
+      }
+    </mat-form-field>
+    <p class="f-s-12 m-0">
+      Ao finalizar, o usuário receberá por e-mail uma senha temporária e o link para criar a senha
+      de acesso.
+    </p>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    class="bg-success text-white admin-dialog-action"
+    type="submit"
+    form="finalizar-cadastro-form"
+    [disabled]="form.invalid || salvando"
+  >
+    <i-tabler name="device-floppy" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Finalizar cadastro
+  </button>
+</mat-dialog-actions>

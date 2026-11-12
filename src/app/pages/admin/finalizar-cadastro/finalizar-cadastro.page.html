@@ -1,0 +1,110 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="page-title p-b-10">
+      <i-tabler name="user-check" class="page-title-icon text-success"></i-tabler>
+      <mat-card-title>Finalizar Cadastro</mat-card-title>
+    </div>
+    <mat-card class="cardWithShadow m-b-20">
+      <mat-card-content>
+        <form class="row align-items-center" [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+              <mat-label>Filtrar por nome</mat-label>
+              <input matInput formControlName="nome" maxlength="255" />
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+              <mat-label>Filtrar por e-mail</mat-label>
+              <input matInput type="email" formControlName="email" maxlength="255" />
+            </mat-form-field>
+          </div>
+          <div class="col-12 d-flex flex-wrap align-items-center gap-3 mt-3">
+            <button mat-flat-button class="bg-success text-white" type="submit">
+              <i-tabler name="search" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+              Consultar
+            </button>
+            <button
+              mat-stroked-button
+              class="admin-filter-action"
+              type="button"
+              (click)="limparFiltros()"
+            >
+              <i-tabler name="refresh" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+              Limpar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle text-center">
+            <thead>
+              <tr>
+                <th class="text-center">Nome</th>
+                <th class="text-center">E-mail</th>
+                <th class="text-center">Contato</th>
+                <th class="text-center">Solicitado em</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (solicitacao of solicitacoes; track solicitacao.id) {
+                <tr>
+                  <td>{{ solicitacao.nome }}</td>
+                  <td>{{ solicitacao.email }}</td>
+                  <td>{{ solicitacao.contato || "—" }}</td>
+                  <td>{{ solicitacao.dataHora | date: "dd/MM/yyyy HH:mm" }}</td>
+                  <td class="text-center">
+                    <button
+                      mat-fab
+                      matTooltip="Finalizar cadastro"
+                      class="shadow-none bg-success icon-40 m-r-4"
+                      type="button"
+                      (click)="finalizar(solicitacao)"
+                    >
+                      <i-tabler name="circle-check" class="text-white d-flex"></i-tabler>
+                    </button>
+                    <button
+                      mat-fab
+                      matTooltip="Recusar cadastro"
+                      class="shadow-none bg-warning icon-40 m-l-4"
+                      type="button"
+                      (click)="recusar(solicitacao)"
+                    >
+                      <i-tabler name="trash" class="text-white d-flex"></i-tabler>
+                    </button>
+                  </td>
+                </tr>
+              }
+              @if (!carregando && solicitacoes.length === 0) {
+                <tr>
+                  <td colspan="5" class="text-center">
+                    Nenhuma solicitação de cadastro pendente.
+                  </td>
+                </tr>
+              }
+              @if (carregando) {
+                <tr>
+                  <td colspan="5" class="text-center">Carregando...</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <mat-paginator
+          [length]="totalElements"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[10]"
+          [hidePageSize]="true"
+          (page)="paginar($event)"
+        >
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
