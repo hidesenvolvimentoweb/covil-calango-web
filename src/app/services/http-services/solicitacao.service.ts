@@ -13,4 +13,12 @@ export class SolicitacaoService extends AbstractGenericClass {
       params,
     });
   }
+
+  aceitar(id: number) {
+    return this.httpClient.post<void>(`${this.urlController}/${id}/aceitar`, {});
+  }
+
+  recusar(id: number) {
+    return this.httpClient.post<void>(`${this.urlController}/${id}/recusar`, {});
+  }
 }

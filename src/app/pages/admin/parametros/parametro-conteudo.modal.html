@@ -1,0 +1,34 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="eye" class="icon-24 text-success"></i-tabler>
+  <span class="admin-parametro-conteudo-titulo">{{ parametro.nome }}</span>
+  <span class="admin-parametro-conteudo-tipo bg-light-success text-success">{{ rotuloTipo }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  @if (ehImagem) {
+    <div class="admin-parametro-conteudo-imagem">
+      @if (urlImagem) {
+        <img [src]="urlImagem" [alt]="parametro.nome" />
+      } @else {
+        <i-tabler name="photo" class="icon-32 d-flex"></i-tabler>
+        <span class="f-s-14">Nenhuma imagem cadastrada.</span>
+      }
+    </div>
+  } @else if (conteudo) {
+    <div class="admin-parametro-conteudo" [class.admin-parametro-conteudo-json]="conteudoJson">{{ conteudoJson ?? conteudo }}</div>
+    <span class="admin-parametro-conteudo-contador f-s-12">{{ conteudo.length }} caracteres</span>
+  } @else {
+    <div class="admin-parametro-conteudo admin-parametro-conteudo-vazio">Parâmetro sem conteúdo.</div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  @if (conteudo) {
+    <button mat-stroked-button class="admin-dialog-action" type="button" (click)="copiar()">
+      <i-tabler name="copy" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+      Copiar
+    </button>
+  }
+  <button mat-flat-button class="bg-success text-white admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Fechar
+  </button>
+</mat-dialog-actions>

@@ -7,7 +7,7 @@ import { MaterialModule } from "src/app/material.module";
 import { ParametroDTO } from "src/app/model/parametro.dto";
 import { AlertService } from "src/app/services/alert.service";
 import { ParametroApiService } from "src/app/services/http-services/parametro.service";
-import { resolverUrlImagem } from "src/app/utils/imagem.util";
+import { ParametroConteudoModal } from "./parametro-conteudo.modal";
 import { ParametroFormModal } from "./parametro-form.modal";
 
 @Component({
@@ -85,17 +85,13 @@ export class ParametrosPage implements OnInit {
     this.carregarParametros();
   }
 
-  urlImagem(parametro: ParametroDTO): string | null {
-    return resolverUrlImagem(parametro.descricao);
-  }
-
-  /** Mostra no máximo 120 caracteres na tabela; textos longos são lidos no modal. */
-  resumo(descricao?: string): string {
-    const texto = descricao?.trim();
-    if (!texto) {
-      return "—";
-    }
-    return texto.length > 120 ? `${texto.slice(0, 120)}…` : texto;
+  visualizarConteudo(parametro: ParametroDTO): void {
+    this.dialog.open(ParametroConteudoModal, {
+      width: "720px",
+      maxWidth: "95vw",
+      panelClass: "admin-form-dialog",
+      data: parametro,
+    });
   }
 
   abrirCadastro(): void {

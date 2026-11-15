@@ -1,6 +1,8 @@
 import { Injectable, signal } from "@angular/core";
 import { UsuarioDTO } from "../model/usuario.dto";
 
+const PERFIL_ADMINISTRADOR = "ROLE_ADMINISTRADOR";
+
 @Injectable({ providedIn: "root" })
 export class UserStateService {
   public get currentUser() {
@@ -23,10 +25,13 @@ export class UserStateService {
     return this._currentUser();
   }
 
+  /** O administrador acessa tudo, como na API, mesmo que as permissões do perfil sejam alteradas. */
   hasPermission(permission: string): boolean {
     return (
-      this.currentUser()?.perfis?.some((perfil) =>
-        perfil.permissoes?.includes(permission),
+      this.currentUser()?.perfis?.some(
+        (perfil) =>
+          perfil.name === PERFIL_ADMINISTRADOR ||
+          perfil.permissoes?.includes(permission),
       ) ?? false
     );
   }

@@ -52,8 +52,8 @@ export const routes: Routes = [
         path: "admin",
         loadChildren: () =>
           import("./pages/admin/admin.routes").then((m) => m.AdminRoutes),
-        canActivate: [AuthGuard, PermissionGuard],
-        data: { profile: "ROLE_ADMINISTRADOR" },
+        // A permissão é exigida por tela, em admin.routes.ts.
+        canActivate: [AuthGuard],
       },
     ],
   },

@@ -65,14 +65,31 @@ export class SolicitacoesPage implements OnInit {
   }
 
   aceitarSolicitacao(solicitacao: SolicitacaoDTO) {
-    this.websocketService.send("/app/solicitacao/aceitar", solicitacao);
-    this.removerSolicitacaoDaLista(solicitacao);
-    this.alertService.showToast("Solicitação Aceita!");
+    this.solicitacaoService.aceitar(solicitacao.id!).subscribe({
+      next: () => {
+        this.removerSolicitacaoDaLista(solicitacao);
+        this.alertService.showToast("Solicitação Aceita!");
+      },
+      error: (error) => this.tratarErroResposta(error, "aceitar"),
+    });
   }
 
   recusarSolicitacao(solicitacao: SolicitacaoDTO) {
-    this.websocketService.send("/app/solicitacao/recusar", solicitacao);
-    this.removerSolicitacaoDaLista(solicitacao);
-    this.alertService.showToast("Solicitação Recusada!", "warning");
+    this.solicitacaoService.recusar(solicitacao.id!).subscribe({
+      next: () => {
+        this.removerSolicitacaoDaLista(solicitacao);
+        this.alertService.showToast("Solicitação Recusada!", "warning");
+      },
+      error: (error) => this.tratarErroResposta(error, "recusar"),
+    });
+  }
+
+  /** Mostra o motivo (ex.: outro atendente já respondeu) e recarrega a lista. */
+  private tratarErroResposta(error: any, acao: string): void {
+    this.alertService.showError(
+      "Erro",
+      error.error?.message ?? `Não foi possível ${acao} a solicitação.`,
+    );
+    this.atualizarListaSolicitacoes();
   }
 }
