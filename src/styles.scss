@@ -123,6 +123,13 @@ body {
   overflow: visible;
 }
 
+// Botões outlined dos modais: borda na mesma cor primary do texto e do ícone.
+// Mais específico que o "border-color: inherit" global de override-component/_button.scss.
+.mat-mdc-dialog-container .mat-mdc-outlined-button:not(:disabled) {
+  color: var(--mat-sys-primary);
+  border-color: var(--mat-sys-primary);
+}
+
 .admin-dialog-action.mat-mdc-button-base {
   min-height: 36px;
   height: auto;
