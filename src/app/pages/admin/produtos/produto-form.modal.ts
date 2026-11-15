@@ -8,6 +8,10 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TablerIconsModule } from "angular-tabler-icons";
 import { Observable, of, switchMap } from "rxjs";
+import {
+  CATEGORIAS_PRODUTO,
+  CategoriaProdutoEnum,
+} from "src/app/enums/categoria-produto.enum";
 import { MaterialModule } from "src/app/material.module";
 import { ProdutoDTO } from "src/app/model/produtos.dto";
 import { AlertService } from "src/app/services/alert.service";
@@ -31,6 +35,7 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
   private alertService = inject(AlertService);
 
   public readonly tiposAceitos = TIPOS_IMAGEM_ACEITOS.join(",");
+  public readonly categorias = CATEGORIAS_PRODUTO;
   public salvando = false;
   public form: FormGroup;
   /** URL exibida na pré-visualização (imagem já salva ou arquivo recém-selecionado). */
@@ -46,7 +51,7 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
   constructor() {
     this.form = this.formBuilder.nonNullable.group({
       nome: ["", Validators.required],
-      categoria: [""],
+      categoria: [CategoriaProdutoEnum.OUTROS, Validators.required],
       valor: [0, [Validators.required, Validators.min(0)]],
       ingredientes: [""],
       prazo: [null as number | null, Validators.min(0)],
@@ -120,7 +125,6 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
     const request = {
       ...value,
       nome: String(value.nome).trim(),
-      categoria: String(value.categoria).trim() || undefined,
       ingredientes: String(value.ingredientes).trim() || undefined,
     };
     const id = this.produtoIdSalvo ?? this.data.id;

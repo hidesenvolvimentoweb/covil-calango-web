@@ -4,6 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { PageEvent } from "@angular/material/paginator";
 import { TablerIconsModule } from "angular-tabler-icons";
+import {
+  CATEGORIAS_PRODUTO,
+  CategoriaProdutoEnum,
+  fromCategoriaProdutoEnumValue,
+} from "src/app/enums/categoria-produto.enum";
 import { MaterialModule } from "src/app/material.module";
 import { ProdutoDTO } from "src/app/model/produtos.dto";
 import { AlertService } from "src/app/services/alert.service";
@@ -34,11 +39,12 @@ export class ProdutosPage implements OnInit {
   public readonly pageSize = 10;
   public totalElements = 0;
   public filtroForm: FormGroup;
+  public readonly categorias = CATEGORIAS_PRODUTO;
 
   constructor() {
     this.filtroForm = this.formBuilder.nonNullable.group({
       nome: [""],
-      categoria: [""],
+      categoria: [null as CategoriaProdutoEnum | null],
     });
   }
 
@@ -81,7 +87,7 @@ export class ProdutosPage implements OnInit {
   }
 
   limparFiltros(): void {
-    this.filtroForm.reset({ nome: "", categoria: "" });
+    this.filtroForm.reset({ nome: "", categoria: null });
     this.pageIndex = 0;
     this.carregarProdutos();
   }
@@ -99,6 +105,10 @@ export class ProdutosPage implements OnInit {
     if (produto.id != null) {
       this.abrirModal(produto.id);
     }
+  }
+
+  rotuloCategoria(produto: ProdutoDTO): string {
+    return fromCategoriaProdutoEnumValue(produto.categoria) || "—";
   }
 
   urlImagem(produto: ProdutoDTO): string | null {

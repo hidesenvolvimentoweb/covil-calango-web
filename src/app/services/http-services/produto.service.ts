@@ -1,6 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
+import { CategoriaProdutoEnum } from "src/app/enums/categoria-produto.enum";
 import { PagedResponseDTO } from "src/app/model/paged-response.dto";
 import { ProdutoDTO, ProdutoRequestDTO } from "src/app/model/produtos.dto";
 import { AbstractGenericClass } from "./generic.service";
@@ -41,7 +42,7 @@ export class ProdutoApiService extends AbstractGenericClass {
   }
 
   getProdutosPage(
-    filter: { nome?: string; categoria?: string } = {},
+    filter: { nome?: string; categoria?: CategoriaProdutoEnum | null } = {},
     page = 0,
     size = 10,
   ) {

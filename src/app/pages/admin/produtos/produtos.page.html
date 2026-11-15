@@ -16,7 +16,12 @@
           <div class="col-md-6">
             <mat-form-field appearance="outline" class="w-100 admin-filter-field">
               <mat-label>Filtrar por categoria</mat-label>
-              <input matInput formControlName="categoria" maxlength="255" />
+              <mat-select formControlName="categoria">
+                <mat-option [value]="null">Todas</mat-option>
+                @for (opcao of categorias; track opcao.valor) {
+                  <mat-option [value]="opcao.valor">{{ opcao.rotulo }}</mat-option>
+                }
+              </mat-select>
             </mat-form-field>
           </div>
           <div class="col-12 d-flex flex-wrap align-items-center gap-3 mt-3">
@@ -74,7 +79,7 @@
                     </span>
                   </td>
                   <td>{{ produto.nome }}</td>
-                  <td>{{ produto.categoria || "—" }}</td>
+                  <td>{{ rotuloCategoria(produto) }}</td>
                   <td>{{ produto.valor | currency: "R$ " }}</td>
                   <td>{{ produto.prazo != null ? produto.prazo + " min" : "—" }}</td>
                   <td class="text-center">

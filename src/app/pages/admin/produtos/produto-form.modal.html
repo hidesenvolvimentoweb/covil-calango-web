@@ -13,7 +13,14 @@
     </mat-form-field>
     <mat-form-field appearance="outline" class="w-100 admin-filter-field">
       <mat-label>Categoria</mat-label>
-      <input matInput formControlName="categoria" maxlength="255" />
+      <mat-select formControlName="categoria">
+        @for (opcao of categorias; track opcao.valor) {
+          <mat-option [value]="opcao.valor">{{ opcao.rotulo }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get("categoria")?.hasError("required")) {
+        <mat-error>Selecione a categoria do produto.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field appearance="outline" class="w-100 admin-filter-field">
       <mat-label>Valor</mat-label>
