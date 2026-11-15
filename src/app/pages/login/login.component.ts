@@ -1,4 +1,6 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { RouterModule } from "@angular/router";
@@ -36,6 +38,7 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private userStateService = inject(UserStateService);
   private alertService = inject(AlertService);
+  private destroyRef = inject(DestroyRef);
 
   public readonly version = APP_VERSION;
 
@@ -45,9 +48,13 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.googleSigninService.authState.subscribe((user) =>
-      this.loginGoogle(user),
-    );
+    // Encerra a inscrição ao sair da tela; senão cada visita ao login acumula uma nova e o login é repetido.
+    this.googleSigninService.authState
+      .pipe(
+        filter((user) => !!user),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((user) => this.loginGoogle(user));
   }
 
   loginGoogle(user: SocialUser) {

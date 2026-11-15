@@ -132,6 +132,7 @@ export class FullComponent {
       () => {
         // Encerra a sessão local mesmo se a API não responder; o cookie expira sozinho.
         this.authService.logout().subscribe({ error: () => undefined });
+        this.authService.desvincularGoogle();
         this.userStateService.clearUser();
         this.websocketService.disconnect();
         void this.router.navigate(["/login"]);

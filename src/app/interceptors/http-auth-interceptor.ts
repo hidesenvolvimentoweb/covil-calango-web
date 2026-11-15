@@ -5,6 +5,7 @@ import {
   HttpRequest,
 } from "@angular/common/http";
 import { inject } from "@angular/core";
+import { SocialAuthService } from "@abacritt/angularx-social-login";
 import { Router } from "@angular/router";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -29,6 +30,7 @@ export function httpAuthInterceptor(
   }
   const userStateService = inject(UserStateService);
   const router = inject(Router);
+  const socialAuthService = inject(SocialAuthService);
 
   const authReq = req.clone({
     withCredentials: true,
@@ -45,6 +47,8 @@ export function httpAuthInterceptor(
         userStateService.getCurrentUserSnapshot()
       ) {
         userStateService.clearUser();
+        // Sem isso o usuário Google guardado seria reenviado à tela de login, refazendo o login sozinho.
+        socialAuthService.signOut().catch(() => undefined);
         void router.navigate(["/login"]);
       }
       return throwError(() => error);
