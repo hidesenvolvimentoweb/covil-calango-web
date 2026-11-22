@@ -1,4 +1,5 @@
 import { UsuarioDTO } from "./usuario.dto";
+import { PagamentoDTO } from "./pagamento.dto";
 
 export class ComandaDTO {
   public id?: number;
@@ -10,4 +11,6 @@ export class ComandaDTO {
   public status?: string;
   public pedidos?: any[];
   public valorTotal?: number;
+  /** Última tentativa de pagamento pelo app; ausente se o cliente ainda não tentou pagar. */
+  public ultimoPagamento?: PagamentoDTO;
 }

@@ -74,10 +74,56 @@
           </mat-card>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <mat-card class="b-1 shadow-none">
+            <mat-card-header class="d-flex align-items-center justify-content-between">
+              <mat-card-title>Pagamento pelo App</mat-card-title>
+              <app-status-pagamento [pagamento]="comanda.ultimoPagamento"></app-status-pagamento>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-t-16">
+              @if (comanda.ultimoPagamento; as pagamento) {
+                <div class="row">
+                  <div class="col-sm-4">
+                    <span class="f-s-12 d-block">Valor cobrado</span>
+                    <span class="f-w-600 f-s-16">{{ pagamento.valor | currency: "R$ " }}</span>
+                  </div>
+                  <div class="col-sm-4">
+                    <span class="f-s-12 d-block">PIX gerado às</span>
+                    <span class="f-w-600 f-s-16">{{ pagamento.dataHoraCriacao | date: "HH:mm" }}</span>
+                  </div>
+                  <div class="col-sm-4">
+                    @if (pago) {
+                      <span class="f-s-12 d-block">Pago às</span>
+                      <span class="f-w-600 f-s-16">{{ pagamento.dataHoraPagamento | date: "HH:mm" }}</span>
+                    } @else {
+                      <span class="f-s-12 d-block">Expira às</span>
+                      <span class="f-w-600 f-s-16">{{ pagamento.dataHoraExpiracao | date: "HH:mm" }}</span>
+                    }
+                  </div>
+                </div>
+                @if (pixPendente) {
+                  <p class="f-s-14 m-t-16 m-b-0">
+                    Enquanto o PIX estiver pendente, o cliente não consegue fazer novos pedidos.
+                  </p>
+                }
+              } @else {
+                <p class="f-s-14 m-0">
+                  O cliente ainda não gerou um PIX. Se ele pagar no balcão, basta fechar a comanda.
+                </p>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
     </form>
   </mat-card-content>
 </div>
 <div class="modal-footer d-flex justify-content-center">
+  @if (pixPendente) {
+    <button mat-stroked-button class="shadow-none m-l-4" (click)="cancelarPix()">Cancelar PIX</button>
+  }
   <button mat-flat-button class="shadow-none bg-warning m-l-4" (click)="fecharComanda()">
     Fechar Comanda
   </button>

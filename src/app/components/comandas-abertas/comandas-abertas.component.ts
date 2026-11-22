@@ -11,17 +11,18 @@ import {
 } from "src/app/enums/status-comanda.enum";
 import { lastValueFrom } from "rxjs";
 import { ComandaDTO } from "src/app/model/comanda.dto";
+import { StatusPagamentoComponent } from "src/app/components/status-pagamento/status-pagamento.component";
 
 @Component({
   selector: "app-comandas-abertas",
   standalone: true,
-  imports: [CommonModule, MatMenuModule, MatButtonModule, MaterialModule],
+  imports: [CommonModule, MatMenuModule, MatButtonModule, MaterialModule, StatusPagamentoComponent],
   templateUrl: "./comandas-abertas.component.html",
 })
 export class ComandasAbertasComponent {
   private comandaService = inject(ComandaService);
 
-  public displayedColumns: string[] = ["nome", "numero", "valor", "hora"];
+  public displayedColumns: string[] = ["nome", "numero", "valor", "pagamento", "hora"];
   public comandas: ComandaDTO[] = [];
 
   constructor() {

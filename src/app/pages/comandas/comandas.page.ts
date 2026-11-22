@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import { MaterialModule } from "../../material.module";
 import { MatTableDataSource } from "@angular/material/table";
 import { ComandaDTO } from "src/app/model/comanda.dto";
@@ -14,37 +14,68 @@ import {
 } from "src/app/enums/status-comanda.enum";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { DetalharComandaModal } from "./detalhar-comanda-modal/detalhar-comanda.modal";
-import { PedidoService } from "src/app/services/http-services/pedidos.service";
+import { WebsocketService } from "src/app/services/http-services/websocket.service";
+import { TOPICO_PAGAMENTOS } from "src/app/services/http-services/pagamento.service";
+import { PagamentoDTO } from "src/app/model/pagamento.dto";
+import { StatusPagamentoEnum } from "src/app/enums/status-pagamento.enum";
+import { StatusPagamentoComponent } from "src/app/components/status-pagamento/status-pagamento.component";
+import { StompSubscription } from "@stomp/stompjs";
+import { mensagemFecharComanda } from "./fechar-comanda.util";
 
 @Component({
   selector: "app-comandas",
-  imports: [CommonModule, MaterialModule, TablerIconsModule],
+  imports: [CommonModule, MaterialModule, TablerIconsModule, StatusPagamentoComponent],
   templateUrl: "./comandas.page.html",
   encapsulation: ViewEncapsulation.None,
 })
-export class ComandasPage implements OnInit {
+export class ComandasPage implements OnInit, OnDestroy {
   private comandaService = inject(ComandaService);
-  private pedidoService = inject(PedidoService);
   private alertService = inject(AlertService);
   private modalService = inject(NgbModal);
+  private websocketService = inject(WebsocketService);
+  private inscricaoPagamentos?: StompSubscription;
 
   public displayedColumns: string[] = [
     "numero",
     "cliente",
     "horaEntrada",
     "valorTotal",
+    "pagamento",
     "acoes",
   ];
   public comandasAbertas = new MatTableDataSource<ComandaDTO>([]);
 
   ngOnInit() {
     this.obterComandasAbertas();
+    this.escutarPagamentos();
+  }
+
+  ngOnDestroy() {
+    this.inscricaoPagamentos?.unsubscribe();
   }
 
   async obterComandasAbertas() {
     this.comandasAbertas.data = await lastValueFrom(
       this.comandaService.getAllByParams(this.buildParams()),
     );
+  }
+
+  /**
+   * Acompanha os pagamentos pelo app em tempo real: o status muda na tabela e, com o PIX aprovado,
+   * a comanda (fechada pela API) sai da lista.
+   */
+  escutarPagamentos() {
+    this.websocketService.createWebSocketConnection().subscribe(() => {
+      this.inscricaoPagamentos = this.websocketService
+        .getClient()
+        .subscribe(TOPICO_PAGAMENTOS, (mensagem) => {
+          const pagamento: PagamentoDTO = JSON.parse(mensagem.body);
+          if (pagamento.status === StatusPagamentoEnum.PAGO) {
+            this.alertService.showToast(`Comanda ${pagamento.comanda} paga via PIX!`);
+          }
+          this.obterComandasAbertas();
+        });
+    });
   }
 
   buildParams() {
@@ -84,7 +115,7 @@ export class ComandasPage implements OnInit {
   fecharComanda(comanda: ComandaDTO) {
     this.alertService.showConfirmation(
       "Alerta!",
-      "Tem certeza que deseja fechar a comanda?",
+      mensagemFecharComanda(comanda),
       () => {
         this.comandaService.fecharComanda(comanda.numero).subscribe({
           next: () => {
