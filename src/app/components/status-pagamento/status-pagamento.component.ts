@@ -10,10 +10,10 @@ import {
   StatusComandaEnum,
 } from "src/app/enums/status-comanda.enum";
 
-const CLASSE_PAGO = "bg-light-success text-success";
-const CLASSE_AGUARDANDO = "bg-light-warning text-warning";
-const CLASSE_NEUTRA = "bg-light-secondary text-secondary";
-const CLASSE_ESTORNADO = "bg-light-error text-error";
+const CLASSE_PAGO = "status-pagamento-pago";
+const CLASSE_AGUARDANDO = "status-pagamento-aguardando";
+const CLASSE_NEUTRA = "status-pagamento-neutro";
+const CLASSE_ESTORNADO = "status-pagamento-erro";
 
 interface Situacao {
   rotulo: string;

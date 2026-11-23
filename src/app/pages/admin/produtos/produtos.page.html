@@ -87,7 +87,7 @@
                     @if (produto.estoque == null) {
                       <span class="text-muted">Sem limite</span>
                     } @else if (produto.estoque === 0) {
-                      <span class="status-pagamento bg-light-error text-error">Esgotado</span>
+                      <span class="status-pagamento status-pagamento-erro">Esgotado</span>
                     } @else {
                       {{ produto.estoque }}
                     }
