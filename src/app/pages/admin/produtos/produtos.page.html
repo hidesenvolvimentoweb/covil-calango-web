@@ -81,7 +81,7 @@
                   </td>
                   <td>{{ produto.nome }}</td>
                   <td>{{ rotuloCategoria(produto) }}</td>
-                  <td>{{ produto.valor | currency: "R$ " }}</td>
+                  <td>{{ produto.valor | currency: "BRL" }}</td>
                   <td>{{ produto.prazo != null ? produto.prazo + " min" : "—" }}</td>
                   <td>
                     @if (produto.estoque == null) {

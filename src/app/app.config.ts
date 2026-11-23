@@ -1,8 +1,15 @@
 import {
   ApplicationConfig,
+  DEFAULT_CURRENCY_CODE,
+  LOCALE_ID,
   provideZoneChangeDetection,
   importProvidersFrom,
 } from "@angular/core";
+import { registerLocaleData } from "@angular/common";
+import localePt from "@angular/common/locales/pt";
+
+// Formato brasileiro nos pipes de moeda, número e data (ex.: R$ 1.234,56).
+registerLocaleData(localePt, "pt-BR");
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { routes } from "./app.routes";
 import {
@@ -26,6 +33,8 @@ import { PortuguesePaginatorIntl } from "./services/portuguese-paginator-intl";
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: "pt-BR" },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: "BRL" },
     socialAuthServiceConfig,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
