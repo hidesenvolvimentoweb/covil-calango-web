@@ -1,6 +1,5 @@
-import { Injectable, signal } from "@angular/core";
+import { Injectable } from "@angular/core";
 
-const CHAVE_SOM_ATIVO = "covil.avisoSonoro.ativo";
 const EVENTOS_DESBLOQUEIO = ["pointerdown", "keydown", "touchstart"];
 
 /** Sequência de notas (frequência em Hz e duração em segundos) de cada aviso. */
@@ -33,9 +32,6 @@ const VOLUME = 0.25;
  */
 @Injectable({ providedIn: "root" })
 export class AvisoSonoroService {
-  /** Preferência do usuário, guardada neste navegador. */
-  public readonly ativo = signal(this.lerPreferencia());
-
   private contexto?: AudioContext;
 
   constructor() {
@@ -58,20 +54,8 @@ export class AvisoSonoroService {
     this.tocar(SOM_PEDIDO);
   }
 
-  alternar(): void {
-    this.ativo.update((ativo) => !ativo);
-    try {
-      localStorage.setItem(CHAVE_SOM_ATIVO, String(this.ativo()));
-    } catch {
-      // Armazenamento indisponível (ex.: navegação privada): a preferência vale só nesta sessão.
-    }
-    if (this.ativo()) {
-      this.tocar(SOM_SOLICITACAO);
-    }
-  }
-
   private tocar(notas: Nota[]): void {
-    const contexto = this.ativo() ? this.obterContexto() : undefined;
+    const contexto = this.obterContexto();
     if (!contexto || contexto.state !== "running") {
       return;
     }
@@ -97,13 +81,5 @@ export class AvisoSonoroService {
       this.contexto = new AudioContext();
     }
     return this.contexto;
-  }
-
-  private lerPreferencia(): boolean {
-    try {
-      return localStorage.getItem(CHAVE_SOM_ATIVO) !== "false";
-    } catch {
-      return true;
-    }
   }
 }

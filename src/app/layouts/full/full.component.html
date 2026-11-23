@@ -8,31 +8,10 @@
             {{ userStateService.currentUser()?.nome }}
           </h5>
         </div>
-        <div class="d-flex gap-2 m-t-8">
-          <button
-            mat-stroked-button
-            type="button"
-            class="flex-grow-1"
-            (click)="avisoSonoroService.alternar()"
-            [matTooltip]="
-              avisoSonoroService.ativo()
-                ? 'Desativar aviso sonoro de solicitações e pedidos'
-                : 'Ativar aviso sonoro de solicitações e pedidos'
-            "
-            [attr.aria-label]="
-              avisoSonoroService.ativo() ? 'Desativar aviso sonoro' : 'Ativar aviso sonoro'
-            "
-          >
-            <i-tabler
-              [name]="avisoSonoroService.ativo() ? 'volume' : 'volume-off'"
-              class="icon-18 d-inline-flex align-middle"
-            ></i-tabler>
+        <div class="bg-warning rounded m-t-8">
+          <button mat-flat-button class="bg-warning w-100" type="button" (click)="sair()">
+            <i-tabler name="logout" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
           </button>
-          <div class="bg-warning rounded flex-grow-1">
-            <button mat-flat-button class="bg-warning w-100" type="button" (click)="sair()" aria-label="Sair">
-              <i-tabler name="logout" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
-            </button>
-          </div>
         </div>
       </div>
       <ng-scrollbar class="position-relative" style="height: 100%">

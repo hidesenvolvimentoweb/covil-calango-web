@@ -52,7 +52,7 @@ export class FullComponent {
   private websocketService = inject(WebsocketService);
   private alertService = inject(AlertService);
   private authService = inject(AuthService);
-  public avisoSonoroService = inject(AvisoSonoroService);
+  private avisoSonoroService = inject(AvisoSonoroService);
 
   @ViewChild("leftsidenav")
   public sidenav: MatSidenav;
