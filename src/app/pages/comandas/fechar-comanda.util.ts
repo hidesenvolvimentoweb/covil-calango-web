@@ -1,14 +1,32 @@
 import { ComandaDTO } from "src/app/model/comanda.dto";
 import { StatusPagamentoEnum } from "src/app/enums/status-pagamento.enum";
+import { FORMAS_PAGAMENTO, FormaPagamentoEnum } from "src/app/enums/forma-pagamento.enum";
+import { AlertService } from "src/app/services/alert.service";
 
 const FORMATO_REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
-/** Mensagem de confirmação do fechamento; avisa que um PIX pendente será cancelado pela API. */
+const OPCOES_FORMA_PAGAMENTO: Record<string, string> = Object.fromEntries(
+  FORMAS_PAGAMENTO.map((opcao) => [opcao.valor, opcao.rotulo]),
+);
+
+/** Mensagem do fechamento: valor a receber e, se houver, o aviso de que o pagamento pendente no app será cancelado. */
 export const mensagemFecharComanda = (comanda: ComandaDTO): string => {
-  const pagamento = comanda.ultimoPagamento;
-  if (pagamento?.status !== StatusPagamentoEnum.PENDENTE) {
-    return "Tem certeza que deseja fechar a comanda?";
+  const valor = `Valor da comanda: ${FORMATO_REAL.format(comanda.valorTotal ?? 0)}.`;
+  if (comanda.ultimoPagamento?.status !== StatusPagamentoEnum.PENDENTE) {
+    return `${valor} Como o cliente pagou?`;
   }
-  return `O cliente tem um PIX pendente de ${FORMATO_REAL.format(pagamento.valor ?? 0)}. `
-    + "Ao fechar a comanda o PIX será cancelado. Confirma o fechamento (pagamento recebido no balcão)?";
+  return `${valor} O pagamento que o cliente gerou no app será cancelado. Como ele pagou no balcão?`;
 };
+
+/** Pergunta como o cliente pagou e só então chama o fechamento com a forma escolhida. */
+export const escolherFormaPagamento = (
+  alertService: AlertService,
+  comanda: ComandaDTO,
+  fechar: (forma: FormaPagamentoEnum) => void,
+): void =>
+  alertService.showEscolha(
+    `Fechar comanda ${comanda.numero}`,
+    mensagemFecharComanda(comanda),
+    OPCOES_FORMA_PAGAMENTO,
+    (valor) => fechar(valor as FormaPagamentoEnum),
+  );

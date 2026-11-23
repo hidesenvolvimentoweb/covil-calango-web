@@ -10,7 +10,12 @@ import { AlertService } from "src/app/services/alert.service";
 import { PagamentoService } from "src/app/services/http-services/pagamento.service";
 import { StatusPagamentoEnum } from "src/app/enums/status-pagamento.enum";
 import { StatusPagamentoComponent } from "src/app/components/status-pagamento/status-pagamento.component";
-import { mensagemFecharComanda } from "../fechar-comanda.util";
+import { escolherFormaPagamento } from "../fechar-comanda.util";
+import { fromFormaPagamentoEnumValue } from "src/app/enums/forma-pagamento.enum";
+import {
+  fromStatusComandaEnumValue,
+  StatusComandaEnum,
+} from "src/app/enums/status-comanda.enum";
 
 @Component({
   selector: "app-comandas",
@@ -32,6 +37,15 @@ export class DetalharComandaModal {
 
   get pixPendente(): boolean {
     return this.comanda?.ultimoPagamento?.status === StatusPagamentoEnum.PENDENTE;
+  }
+
+  get fechada(): boolean {
+    return this.comanda?.status === fromStatusComandaEnumValue(StatusComandaEnum.FECHADA);
+  }
+
+  /** Forma de pagamento registrada no fechamento (ex.: "Dinheiro"); vazia se não informada. */
+  get formaPagamento(): string {
+    return fromFormaPagamentoEnumValue(this.comanda?.formaPagamento);
   }
 
   get pago(): boolean {
@@ -76,22 +90,22 @@ export class DetalharComandaModal {
   }
 
   fecharComanda() {
-    this.alertService.showConfirmation(
-      "Alerta!",
-      mensagemFecharComanda(this.comanda),
-      () => {
-        this.comandaService.fecharComanda(this.comanda.numero).subscribe({
-          next: () => {
-            this.alertService.showToast(`Comanda ${this.comanda.numero} fechada com sucesso!`);
-            this.close(true);
-          },
-          error: (error) =>
-            this.alertService.showError(
-              "Erro",
-              error.error?.message ?? "Não foi possível fechar a comanda.",
-            ),
-        });
-      },
-    );
+    escolherFormaPagamento(this.alertService, this.comanda, (forma) => {
+      this.comandaService.fecharComanda(this.comanda.numero, forma).subscribe({
+        next: () => {
+          this.alertService.showToast(
+            `Comanda ${this.comanda.numero} fechada: pago (${fromFormaPagamentoEnumValue(forma)})!`,
+          );
+          this.close(true);
+        },
+        error: (error) => {
+          this.alertService.showError(
+            "Erro",
+            error.error?.message ?? "Não foi possível fechar a comanda.",
+          );
+          this.close(true);
+        },
+      });
+    });
   }
 }

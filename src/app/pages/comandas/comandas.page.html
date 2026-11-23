@@ -1,95 +1,156 @@
 <div class="page-title p-b-10">
   <i-tabler name="receipt" class="page-title-icon text-success"></i-tabler>
-  <mat-card-title>Comandas Abertas</mat-card-title>
+  <mat-card-title>Comandas</mat-card-title>
 </div>
-<mat-card class="cardWithShadow">
-  <mat-card-content>
-    <div class="table-responsive">
-      <table mat-table [dataSource]="comandasAbertas" class="w-100 text-center">
-        <ng-container matColumnDef="numero">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center"> Número </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <span
-              ><span class="f-w-600 f-s-14">{{ comanda.numero }}</span></span
-            >
-          </td>
-        </ng-container>
+<div class="row">
+  <div class="col-lg-4">
+    <app-card-pedidos
+      [title]="'Comandas Abertas'"
+      [value]="comandasAbertas.data.length"
+      variant="success"
+      icon="receipt"
+    ></app-card-pedidos>
+  </div>
+  <div class="col-lg-4">
+    <app-card-pedidos
+      [title]="'Comandas Em Análise'"
+      [value]="comandasEmAnalise.data.length"
+      variant="warning"
+      icon="clock-exclamation"
+    ></app-card-pedidos>
+  </div>
+  <div class="col-lg-4">
+    <app-card-pedidos
+      [title]="'Comandas Fechadas'"
+      [value]="comandasFechadas.data.length"
+      variant="danger"
+      icon="receipt-off"
+    ></app-card-pedidos>
+  </div>
+</div>
 
-        <ng-container matColumnDef="cliente">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
-            Nome do Cliente
-          </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <span
-              ><span class="f-w-600 f-s-14">{{
-                comanda.nomeCliente || comanda.usuario?.nome
-              }}</span></span
-            >
-          </td>
-        </ng-container>
+@if (comandasAbertas.data.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      tabelaComandas;
+      context: { titulo: 'Comandas Abertas', icone: 'receipt', dados: comandasAbertas, colunas: colunasAbertas }
+    "
+  ></ng-container>
+}
 
-        <ng-container matColumnDef="horaEntrada">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
-            Hora da Entrada
-          </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <span
-              ><span class="f-w-600 f-s-14">{{
-                comanda.dataHoraEntrada | date: "HH:mm"
-              }}</span></span
-            >
-          </td>
-        </ng-container>
+@if (comandasEmAnalise.data.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      tabelaComandas;
+      context: {
+        titulo: 'Comandas Em Análise',
+        icone: 'clock-exclamation',
+        dados: comandasEmAnalise,
+        colunas: colunasEmAnalise,
+      }
+    "
+  ></ng-container>
+}
 
-        <ng-container matColumnDef="valorTotal">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
-            Valor Total
-          </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <span class="f-w-600 f-s-14">{{ comanda.valorTotal | currency: "R$ " }}</span>
-          </td>
-        </ng-container>
+@if (comandasFechadas.data.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      tabelaComandas;
+      context: { titulo: 'Comandas Fechadas', icone: 'receipt-off', dados: comandasFechadas, colunas: colunasFechadas }
+    "
+  ></ng-container>
+}
 
-        <ng-container matColumnDef="pagamento">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
-            Pagamento
-          </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <app-status-pagamento [pagamento]="comanda.ultimoPagamento"></app-status-pagamento>
-          </td>
-        </ng-container>
+<!-- Mesma tabela para os três status; cada um escolhe as colunas que exibe. -->
+<ng-template #tabelaComandas let-titulo="titulo" let-icone="icone" let-dados="dados" let-colunas="colunas">
+  <div class="page-title p-b-10">
+    <i-tabler [name]="icone" class="page-title-icon text-success"></i-tabler>
+    <mat-card-title>{{ titulo }}</mat-card-title>
+  </div>
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dados" class="w-100 text-center">
+          <ng-container matColumnDef="numero">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center"> Número </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.numero }}</span>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="acoes">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center"> Ações </th>
-          <td mat-cell *matCellDef="let comanda" class="text-center">
-            <button
-              mat-fab
-              matTooltip="Detalhar Comanda"
-              (click)="abrirModalDetalharComanda(comanda)"
-              class="shadow-none bg-default icon-40 m-l-4"
-            >
-              <i-tabler name="search" class="text-white d-flex"></i-tabler>
-            </button>
-            <button
-              mat-fab
-              matTooltip="Fechar Comanda"
-              (click)="fecharComanda(comanda)"
-              class="shadow-none bg-warning icon-40 m-l-4"
-            >
-              <i-tabler name="square-x" class="text-white d-flex"></i-tabler>
-            </button>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Nome do Cliente
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.nomeCliente || comanda.usuario?.nome }}</span>
+            </td>
+          </ng-container>
 
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            Nenhuma comanda aberta no momento.
-          </td>
-        </tr>
+          <ng-container matColumnDef="horaEntrada">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Hora da Entrada
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.dataHoraEntrada | date: "HH:mm" }}</span>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
-  </mat-card-content>
-</mat-card>
+          <ng-container matColumnDef="horaSaida">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Hora da Saída
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ (comanda.dataHoraSaida | date: "HH:mm") || "—" }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorTotal">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Valor Total
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.valorTotal | currency: "R$ " }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="pagamento">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Pagamento
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <app-status-pagamento [comanda]="comanda"></app-status-pagamento>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center"> Ações </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <button
+                mat-fab
+                matTooltip="Detalhar Comanda"
+                (click)="abrirModalDetalharComanda(comanda)"
+                class="shadow-none bg-default icon-40 m-l-4"
+              >
+                <i-tabler name="search" class="text-white d-flex"></i-tabler>
+              </button>
+              @if (!isFechada(comanda)) {
+                <button
+                  mat-fab
+                  matTooltip="Fechar Comanda"
+                  (click)="fecharComanda(comanda)"
+                  class="shadow-none bg-warning icon-40 m-l-4"
+                >
+                  <i-tabler name="square-x" class="text-white d-flex"></i-tabler>
+                </button>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

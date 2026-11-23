@@ -3,6 +3,7 @@ import { environment } from "src/environments/environment";
 import { AbstractGenericClass } from "./generic.service";
 import { HttpParams } from "@angular/common/http";
 import { ComandaDTO } from "src/app/model/comanda.dto";
+import { FormaPagamentoEnum } from "src/app/enums/forma-pagamento.enum";
 
 @Injectable({ providedIn: "root" })
 export class ComandaService extends AbstractGenericClass {
@@ -21,10 +22,10 @@ export class ComandaService extends AbstractGenericClass {
     );
   }
 
-  fecharComanda(numero: any, params: HttpParams = new HttpParams()) {
-    return this.httpClient.put<ComandaDTO[]>(
-      `${this.urlController}/fechar/${numero}`,
-      { params },
-    );
+  /** Fecha a comanda no balcão, informando como o cliente pagou. */
+  fecharComanda(numero: any, formaPagamento: FormaPagamentoEnum) {
+    return this.httpClient.put<void>(`${this.urlController}/fechar/${numero}`, {
+      formaPagamento,
+    });
   }
 }

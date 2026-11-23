@@ -36,6 +36,33 @@ export class AlertService {
     });
   }
 
+  /**
+   * Confirmação com uma escolha obrigatória entre as opções (valor → rótulo). Chama o callback com o valor
+   * escolhido; cancelar não faz nada.
+   */
+  showEscolha(
+    title: string,
+    text: string,
+    opcoes: Record<string, string>,
+    callback: (valor: string) => void,
+  ) {
+    Swal.fire({
+      title,
+      text,
+      icon: "question",
+      input: "radio",
+      inputOptions: opcoes,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar",
+      inputValidator: (valor) => (valor ? null : "Selecione uma opção"),
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        callback(result.value);
+      }
+    });
+  }
+
   showSuccess(title: string, text: string, options: SweetAlertOptions = {}) {
     this.showAlert(title, text, "success", options);
   }
