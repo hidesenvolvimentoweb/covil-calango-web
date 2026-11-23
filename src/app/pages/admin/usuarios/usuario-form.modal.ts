@@ -10,6 +10,7 @@ import { TablerIconsModule } from "angular-tabler-icons";
 import { MaterialModule } from "src/app/material.module";
 import { AlertService } from "src/app/services/alert.service";
 import { UsuarioAdminService } from "src/app/services/http-services/usuario-admin.service";
+import { TAMANHO_MINIMO_SENHA } from "src/app/validators/senha.validator";
 
 @Component({
   selector: "app-usuario-form-modal",
@@ -27,6 +28,7 @@ export class UsuarioFormModal implements OnInit {
   private usuarioService = inject(UsuarioAdminService);
   private alertService = inject(AlertService);
 
+  public readonly tamanhoMinimoSenha = TAMANHO_MINIMO_SENHA;
   public salvando = false;
   public form: FormGroup;
 
@@ -37,7 +39,8 @@ export class UsuarioFormModal implements OnInit {
       nome: ["", Validators.required],
       email: ["", [Validators.required, Validators.email]],
       contato: [""],
-      password: [""],
+      // minLength ignora o campo vazio: na edição, deixar em branco mantém a senha atual.
+      password: ["", Validators.minLength(TAMANHO_MINIMO_SENHA)],
     });
     if (data.id == null) {
       this.form.get("password")?.addValidators(Validators.required);

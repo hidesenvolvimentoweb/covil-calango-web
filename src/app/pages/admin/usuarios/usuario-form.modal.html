@@ -31,6 +31,9 @@
       @if (form.get("password")?.hasError("required")) {
         <mat-error>Informe a senha.</mat-error>
       }
+      @if (form.get("password")?.hasError("minlength")) {
+        <mat-error>A senha deve ter ao menos {{ tamanhoMinimoSenha }} caracteres.</mat-error>
+      }
     </mat-form-field>
   </form>
 </mat-dialog-content>

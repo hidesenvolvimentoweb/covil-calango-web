@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 
-export const TAMANHO_MINIMO_SENHA = 6;
+export const TAMANHO_MINIMO_SENHA = 8;
 
 /**
  * Validador para o campo de confirmação de senha: compara o valor com o do
