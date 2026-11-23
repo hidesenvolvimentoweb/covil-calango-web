@@ -4,6 +4,7 @@ import { MaterialModule } from "../../material.module";
 import { CardPedidosComponent } from "src/app/components/card-pedidos/card-pedidos.component";
 import { ProximosPedidosComponent } from "src/app/components/proximos-pedidos/proximos-pedidos.component";
 import { ComandasAbertasComponent } from "src/app/components/comandas-abertas/comandas-abertas.component";
+import { RelatorioDiarioComponent } from "src/app/components/relatorio-diario/relatorio-diario.component";
 import { PedidoService } from "src/app/services/http-services/pedidos.service";
 import { HttpParams } from "@angular/common/http";
 import { StatusPedidoEnum } from "src/app/enums/status-pedido.enum";
@@ -18,6 +19,7 @@ import { PedidoDTO } from "src/app/model/pedido.dto";
     CardPedidosComponent,
     ProximosPedidosComponent,
     ComandasAbertasComponent,
+    RelatorioDiarioComponent,
   ],
   templateUrl: "./dashboard.page.html",
   encapsulation: ViewEncapsulation.None,

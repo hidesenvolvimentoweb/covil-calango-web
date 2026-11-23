@@ -1,0 +1,325 @@
+<div class="page-title p-b-10 relatorio-cabecalho">
+  <div class="d-flex align-items-center">
+    <i-tabler name="chart-bar" class="page-title-icon text-success"></i-tabler>
+    <mat-card-title>Relatórios do dia</mat-card-title>
+  </div>
+  <div class="relatorio-filtro">
+    <button mat-icon-button type="button" aria-label="Dia anterior" (click)="mudarDia(-1)">
+      <i-tabler name="chevron-left" class="icon-20 d-flex"></i-tabler>
+    </button>
+    <mat-form-field appearance="outline" class="relatorio-data" subscriptSizing="dynamic">
+      <mat-label>Dia</mat-label>
+      <input matInput type="date" [max]="hoje" [(ngModel)]="data" (change)="carregar()" />
+    </mat-form-field>
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Próximo dia"
+      [disabled]="vendoHoje"
+      (click)="mudarDia(1)"
+    >
+      <i-tabler name="chevron-right" class="icon-20 d-flex"></i-tabler>
+    </button>
+    @if (!vendoHoje) {
+      <button mat-stroked-button type="button" (click)="irParaHoje()">Hoje</button>
+    } @else {
+      <span class="relatorio-ao-vivo"><span class="relatorio-ao-vivo-ponto"></span>Atualizando em tempo real</span>
+    }
+    <button
+      mat-flat-button
+      type="button"
+      class="bg-success text-white"
+      [disabled]="!relatorio || !!gerandoPdf"
+      (click)="exportarPdf('completo')"
+    >
+      <i-tabler
+        [name]="gerandoPdf === 'completo' ? 'loader-2' : 'file-download'"
+        class="icon-18 d-inline-flex align-middle m-r-4"
+        [class.relatorio-girando]="gerandoPdf === 'completo'"
+      ></i-tabler>
+      {{ gerandoPdf === "completo" ? "Gerando PDF..." : "Exportar relatório completo" }}
+    </button>
+  </div>
+</div>
+
+<!-- Cabeçalho de cada seção: título, subtítulo e o botão do PDF da seção. -->
+<ng-template #cabecalhoSecao let-titulo="titulo" let-subtitulo="subtitulo" let-secao="secao">
+  <div class="relatorio-secao-cabecalho">
+    <div>
+      <mat-card-title class="m-b-4">{{ titulo }}</mat-card-title>
+      <mat-card-subtitle>{{ subtitulo }}</mat-card-subtitle>
+    </div>
+    <button
+      mat-stroked-button
+      type="button"
+      class="relatorio-pdf"
+      [matTooltip]="'Baixar ' + titulo.toLowerCase() + ' em PDF'"
+      [attr.aria-label]="'Baixar ' + titulo.toLowerCase() + ' em PDF'"
+      [disabled]="!!gerandoPdf"
+      (click)="exportarPdf(secao)"
+    >
+      <i-tabler
+        [name]="gerandoPdf === secao ? 'loader-2' : 'file-type-pdf'"
+        class="icon-18 d-inline-flex align-middle"
+        [class.relatorio-girando]="gerandoPdf === secao"
+      ></i-tabler>
+      <span class="m-l-4">PDF</span>
+    </button>
+  </div>
+</ng-template>
+
+@if (relatorio; as r) {
+  <!-- Indicadores -->
+  <div class="row">
+    <div class="col-sm-6 col-xl-3">
+      <mat-card class="cardWithShadow relatorio-indicador">
+        <mat-card-content>
+          <span class="relatorio-indicador-icone icone-verde"><i-tabler name="cash" class="icon-24 d-flex"></i-tabler></span>
+          <div>
+            <span class="relatorio-indicador-rotulo">Arrecadado</span>
+            <span class="relatorio-indicador-valor">{{ formatarReal(r.arrecadado) }}</span>
+            <span class="relatorio-indicador-detalhe">{{ r.comandasFechadas }} comanda(s) fechada(s)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <mat-card class="cardWithShadow relatorio-indicador">
+        <mat-card-content>
+          <span class="relatorio-indicador-icone icone-azul"><i-tabler name="receipt-2" class="icon-24 d-flex"></i-tabler></span>
+          <div>
+            <span class="relatorio-indicador-rotulo">Ticket médio</span>
+            <span class="relatorio-indicador-valor">{{ formatarReal(r.ticketMedio) }}</span>
+            <span class="relatorio-indicador-detalhe">Permanência média: {{ formatarDuracao(r.permanenciaMediaMinutos) }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <mat-card class="cardWithShadow relatorio-indicador">
+        <mat-card-content>
+          <span class="relatorio-indicador-icone icone-ambar"><i-tabler name="shopping-cart" class="icon-24 d-flex"></i-tabler></span>
+          <div>
+            <span class="relatorio-indicador-rotulo">Vendido em pedidos</span>
+            <span class="relatorio-indicador-valor">{{ formatarReal(r.vendido) }}</span>
+            <span class="relatorio-indicador-detalhe">{{ r.itensVendidos }} item(ns) · {{ r.pedidosRegistrados }} pedido(s)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <mat-card class="cardWithShadow relatorio-indicador">
+        <mat-card-content>
+          <span class="relatorio-indicador-icone icone-roxo"><i-tabler name="users" class="icon-24 d-flex"></i-tabler></span>
+          <div>
+            <span class="relatorio-indicador-rotulo">Comandas atendidas</span>
+            <span class="relatorio-indicador-valor">{{ r.comandasAtendidas }}</span>
+            <span class="relatorio-indicador-detalhe">
+              {{ r.comandasAbertas }} aberta(s) · {{ r.pedidosEntregues }} pedido(s) entregue(s) · {{ r.pedidosCancelados }}
+              cancelado(s)
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Produtos que saíram -->
+    <div class="col-lg-7">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Produtos que saíram', subtitulo: 'Unidades vendidas no dia (pedidos não cancelados)', secao: 'produtos' }
+            "
+          ></ng-container>
+          @if (temVendas && graficoProdutos) {
+            <app-grafico
+              #gProdutos
+              [config]="graficoProdutos"
+              [altura]="300"
+              descricao="Gráfico de barras com as unidades vendidas de cada produto"
+            ></app-grafico>
+          } @else {
+            <p class="relatorio-vazio">Nenhum produto vendido neste dia.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Formas de pagamento -->
+    <div class="col-lg-5">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Arrecadado por forma de pagamento', subtitulo: 'Comandas fechadas no dia', secao: 'formas' }
+            "
+          ></ng-container>
+          @if (temFechamentos && graficoFormas) {
+            <app-grafico
+              #gFormas
+              [config]="graficoFormas"
+              [altura]="220"
+              descricao="Gráfico de rosca com o valor arrecadado em cada forma de pagamento"
+            ></app-grafico>
+            <ul class="relatorio-lista m-t-16">
+              @for (forma of r.formasPagamento; track forma.chave) {
+                <li>
+                  <span>{{ forma.rotulo }}</span>
+                  <span>
+                    <strong>{{ formatarReal(forma.valor) }}</strong>
+                    <span class="relatorio-lista-detalhe">{{ percentual(forma.valor) }}</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="relatorio-vazio">Nenhuma comanda fechada neste dia.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Movimento por hora -->
+    <div class="col-lg-8">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Movimento por hora', subtitulo: 'Pedidos feitos e valor arrecadado em cada hora', secao: 'horas' }
+            "
+          ></ng-container>
+          @if ((temPedidos || temFechamentos) && graficoHoras) {
+            <app-grafico
+              #gHoras
+              [config]="graficoHoras"
+              descricao="Gráfico com a quantidade de pedidos e o valor arrecadado por hora"
+            ></app-grafico>
+          } @else {
+            <p class="relatorio-vazio">Sem movimento neste dia.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Pedidos por status -->
+    <div class="col-lg-4">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Pedidos por status', subtitulo: 'Situação atual dos pedidos do dia', secao: 'status' }
+            "
+          ></ng-container>
+          @if (temPedidos && graficoStatus) {
+            <app-grafico
+              #gStatus
+              [config]="graficoStatus"
+              descricao="Gráfico de rosca com a quantidade de pedidos em cada status"
+            ></app-grafico>
+          } @else {
+            <p class="relatorio-vazio">Nenhum pedido neste dia.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Categorias -->
+    <div class="col-lg-5">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Vendas por categoria', subtitulo: 'Valor vendido em cada categoria', secao: 'categorias' }
+            "
+          ></ng-container>
+          @if (temVendas && graficoCategorias) {
+            <app-grafico
+              #gCategorias
+              [config]="graficoCategorias"
+              descricao="Gráfico de barras com o valor vendido em cada categoria"
+            ></app-grafico>
+          } @else {
+            <p class="relatorio-vazio">Nenhuma venda neste dia.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Tendência -->
+    <div class="col-lg-7">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <ng-container
+            *ngTemplateOutlet="
+              cabecalhoSecao;
+              context: { titulo: 'Arrecadado nos últimos 7 dias', subtitulo: 'Até o dia selecionado', secao: 'tendencia' }
+            "
+          ></ng-container>
+          @if (graficoTendencia) {
+            <app-grafico
+              #gTendencia
+              [config]="graficoTendencia"
+              descricao="Gráfico de linha com o valor arrecadado em cada um dos últimos 7 dias"
+            ></app-grafico>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Tabela de produtos -->
+  @if (temVendas) {
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <mat-card-title class="m-b-16">Detalhamento dos produtos vendidos</mat-card-title>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle text-center m-b-0">
+            <thead>
+              <tr>
+                <th class="text-center">#</th>
+                <th class="text-start">Produto</th>
+                <th class="text-center">Categoria</th>
+                <th class="text-center">Unidades</th>
+                <th class="text-center">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (produto of r.produtos; track produto.id; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="text-start f-w-600">{{ produto.nome }}</td>
+                  <td>{{ produto.categoria }}</td>
+                  <td>{{ produto.quantidade }}</td>
+                  <td>{{ formatarReal(produto.valor) }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="f-w-600">
+                <td colspan="3" class="text-end">Total</td>
+                <td>{{ r.itensVendidos }}</td>
+                <td>{{ formatarReal(r.vendido) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+} @else if (carregando) {
+  <mat-card class="cardWithShadow">
+    <mat-card-content><p class="relatorio-vazio">Gerando relatório...</p></mat-card-content>
+  </mat-card>
+}

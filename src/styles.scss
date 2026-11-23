@@ -240,3 +240,151 @@ body {
     border-radius: 8px;
   }
 }
+
+/* Relatórios do Dashboard (RelatorioDiarioComponent). */
+.relatorio-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.relatorio-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.relatorio-data {
+  width: 170px;
+}
+
+.relatorio-ao-vivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b7f4b;
+}
+
+.relatorio-ao-vivo-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #1b7f4b;
+  animation: relatorio-pulso 2s infinite;
+}
+
+@keyframes relatorio-pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relatorio-ao-vivo-ponto {
+    animation: none;
+  }
+}
+
+.relatorio-indicador .mat-mdc-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.relatorio-indicador-icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  color: #fff;
+
+  &.icone-verde { background-color: #1b7f4b; }
+  &.icone-azul { background-color: #2f6fb3; }
+  &.icone-ambar { background-color: #a15c00; }
+  &.icone-roxo { background-color: #7b4fb5; }
+}
+
+.relatorio-indicador-rotulo,
+.relatorio-indicador-detalhe {
+  display: block;
+  font-size: 12px;
+  color: #5a6a85;
+}
+
+.relatorio-indicador-valor {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.relatorio-vazio {
+  margin: 0;
+  padding: 32px 0;
+  text-align: center;
+  color: #5a6a85;
+}
+
+.relatorio-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  li:last-child {
+    border-bottom: 0;
+  }
+}
+
+.relatorio-lista-detalhe {
+  display: inline-block;
+  min-width: 42px;
+  margin-left: 8px;
+  text-align: right;
+  font-size: 12px;
+  color: #5a6a85;
+}
+
+.relatorio-secao-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.relatorio-pdf.mat-mdc-outlined-button {
+  flex-shrink: 0;
+  min-width: 0;
+  padding: 0 12px;
+  color: #1b7f4b;
+  border-color: rgba(27, 127, 75, 0.4);
+}
+
+.relatorio-girando {
+  animation: relatorio-giro 1s linear infinite;
+}
+
+@keyframes relatorio-giro {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relatorio-girando {
+    animation: none;
+  }
+}
