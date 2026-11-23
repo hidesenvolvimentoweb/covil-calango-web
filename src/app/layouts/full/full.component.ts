@@ -25,6 +25,7 @@ import { NavItem } from "./sidebar/nav-item/nav-item";
 import { AlertService } from "src/app/services/alert.service";
 import { AuthService } from "src/app/services/http-services/auth.service";
 import { APP_VERSION } from "src/app/utils/app-version";
+import { AvisoSonoroService } from "src/app/services/aviso-sonoro.service";
 
 const MOBILE_VIEW = "screen and (max-width: 768px)";
 const TABLET_VIEW = "screen and (min-width: 769px) and (max-width: 1024px)";
@@ -51,6 +52,7 @@ export class FullComponent {
   private websocketService = inject(WebsocketService);
   private alertService = inject(AlertService);
   private authService = inject(AuthService);
+  public avisoSonoroService = inject(AvisoSonoroService);
 
   @ViewChild("leftsidenav")
   public sidenav: MatSidenav;
@@ -94,16 +96,32 @@ export class FullComponent {
   }
 
   ngOnInit(): void {
+    const recebeSolicitacoes =
+      this.userStateService.hasPermission("web-solicitacoes");
+    const recebePedidos = this.userStateService.hasPermission("web-pedidos");
+    if (!recebeSolicitacoes && !recebePedidos) {
+      return;
+    }
     this.websocketService.createWebSocketConnection().subscribe(() => {
-      this.websocketService.getClient().subscribe("/topic/solicitacoes", () => {
-        this.notificacoesPendentes++;
-        const solicitacoes = this.navItems.find(
-          (item) => item.displayName === "Solicitações",
+      const client = this.websocketService.getClient();
+      // Os dois tópicos só recebem mensagens de itens novos: mudanças de status vão para outros tópicos.
+      if (recebeSolicitacoes) {
+        client.subscribe("/topic/solicitacoes", () => {
+          this.avisoSonoroService.tocarNovaSolicitacao();
+          this.notificacoesPendentes++;
+          const solicitacoes = this.navItems.find(
+            (item) => item.displayName === "Solicitações",
+          );
+          if (solicitacoes) {
+            solicitacoes.notificacoesPendentes = this.notificacoesPendentes;
+          }
+        });
+      }
+      if (recebePedidos) {
+        client.subscribe("/topic/pedidos", () =>
+          this.avisoSonoroService.tocarNovoPedido(),
         );
-        if (solicitacoes) {
-          solicitacoes.notificacoesPendentes = this.notificacoesPendentes;
-        }
-      });
+      }
     });
   }
 
