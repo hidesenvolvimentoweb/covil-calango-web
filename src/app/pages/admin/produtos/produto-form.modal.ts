@@ -55,6 +55,10 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
       valor: [0, [Validators.required, Validators.min(0)]],
       ingredientes: [""],
       prazo: [null as number | null, Validators.min(0)],
+      estoque: [
+        null as number | null,
+        [Validators.min(0), Validators.pattern(/^\d+$/)],
+      ],
     });
   }
 
@@ -122,12 +126,17 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
     }
     this.salvando = true;
     const value = this.form.getRawValue();
+    const id = this.produtoIdSalvo ?? this.data.id;
+    const estoque = value.estoque;
     const request = {
       ...value,
       nome: String(value.nome).trim(),
       ingredientes: String(value.ingredientes).trim() || undefined,
+      // Campo vazio: produto sem controle de estoque.
+      estoque: estoque === null || estoque === "" ? null : Number(estoque),
+      // Na alteração, só envia o estoque se o administrador mexeu nele (ver ProdutoRequestDTO.alterarEstoque).
+      alterarEstoque: id == null || this.form.get("estoque")!.dirty,
     };
-    const id = this.produtoIdSalvo ?? this.data.id;
     const produto$ =
       id == null
         ? this.produtoService.create(request)
