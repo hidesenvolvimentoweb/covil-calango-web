@@ -7,10 +7,14 @@
     <button mat-icon-button type="button" aria-label="Dia anterior" (click)="mudarDia(-1)">
       <i-tabler name="chevron-left" class="icon-20 d-flex"></i-tabler>
     </button>
-    <mat-form-field appearance="outline" class="relatorio-data" subscriptSizing="dynamic">
-      <mat-label>Dia</mat-label>
-      <input matInput type="date" [max]="hoje" [(ngModel)]="data" (change)="carregar()" />
-    </mat-form-field>
+    <input
+      type="date"
+      class="relatorio-data"
+      aria-label="Dia do relatório"
+      [max]="hoje"
+      [(ngModel)]="data"
+      (change)="carregar()"
+    />
     <button
       mat-icon-button
       type="button"
@@ -126,7 +130,7 @@
 
   <div class="row">
     <!-- Produtos que saíram -->
-    <div class="col-lg-7">
+    <div class="col-lg-12">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container
@@ -150,7 +154,7 @@
     </div>
 
     <!-- Formas de pagamento -->
-    <div class="col-lg-5">
+    <div class="col-lg-12">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container
@@ -187,7 +191,7 @@
 
   <div class="row">
     <!-- Movimento por hora -->
-    <div class="col-lg-8">
+    <div class="col-lg-12">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container
@@ -210,7 +214,7 @@
     </div>
 
     <!-- Pedidos por status -->
-    <div class="col-lg-4">
+    <div class="col-lg-12">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container
@@ -235,7 +239,7 @@
 
   <div class="row">
     <!-- Categorias -->
-    <div class="col-lg-5">
+    <div class="col-lg-6">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container
@@ -258,7 +262,7 @@
     </div>
 
     <!-- Tendência -->
-    <div class="col-lg-7">
+    <div class="col-lg-6">
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <ng-container

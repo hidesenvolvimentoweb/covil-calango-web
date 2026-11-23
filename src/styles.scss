@@ -258,8 +258,33 @@ body {
   gap: 8px;
 }
 
+/* Dia do relatório: só a data, sem borda; a largura acompanha o texto para não cortar "dd/mm/aaaa". */
 .relatorio-data {
-  width: 170px;
+  box-sizing: content-box;
+  min-width: 11ch;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1b7f4b;
+    outline-offset: 2px;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    margin-left: 6px;
+    cursor: pointer;
+  }
 }
 
 .relatorio-ao-vivo {
