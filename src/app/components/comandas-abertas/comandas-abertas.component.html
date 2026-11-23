@@ -5,6 +5,7 @@
         <mat-card-title>Comandas Abertas</mat-card-title>
       </div>
     </div>
+    @if (comandas.length) {
     <div class="table-responsive">
       <table mat-table [dataSource]="comandas" class="w-100">
         <ng-container matColumnDef="nome">
@@ -54,15 +55,13 @@
           </td>
         </ng-container>
 
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            Nenhuma comanda aberta no momento.
-          </td>
-        </tr>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </div>
+    } @else {
+      <p class="f-s-14 m-0">Nenhuma comanda aberta no momento.</p>
+    }
   </mat-card-content>
 </mat-card>
