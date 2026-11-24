@@ -37,7 +37,7 @@
       <mat-label>Estoque disponível</mat-label>
       <input matInput type="number" min="0" step="1" formControlName="estoque" />
       <mat-hint>
-        Unidades que ainda podem ser vendidas. Deixe vazio para não limitar. O cliente não vê este número.
+        Unidades que ainda podem ser vendidas. Deixe vazio para não limitar
       </mat-hint>
       @if (form.get("estoque")?.hasError("min") || form.get("estoque")?.hasError("pattern")) {
         <mat-error>Informe um número inteiro maior ou igual a zero.</mat-error>
