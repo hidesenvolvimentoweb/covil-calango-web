@@ -67,7 +67,21 @@
 
     <mat-card class="b-1 shadow-none evento-detalhe-card">
       <mat-card-content>
-        <span class="evento-detalhe-rotulo">Participantes</span>
+        <div class="evento-participantes-cabecalho">
+          <span class="evento-detalhe-rotulo">Participantes</span>
+          @if (participantes.length) {
+            <button
+              mat-button
+              type="button"
+              class="evento-participantes-remover-todos"
+              [disabled]="removendo != null || removendoTodos"
+              (click)="removerTodos()"
+            >
+              <i-tabler name="users-minus" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+              Remover todos
+            </button>
+          }
+        </div>
         @if (carregandoParticipantes) {
           <p class="evento-participantes-vazio">Carregando participantes...</p>
         } @else if (!participantes.length) {
@@ -92,7 +106,7 @@
                   class="evento-participante-remover"
                   matTooltip="Remover do evento"
                   [attr.aria-label]="'Remover ' + participante.nome + ' do evento'"
-                  [disabled]="removendo != null"
+                  [disabled]="removendo != null || removendoTodos"
                   (click)="removerParticipante(participante)"
                 >
                   <i-tabler name="user-minus" class="icon-20 d-flex"></i-tabler>

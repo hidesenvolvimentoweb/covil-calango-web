@@ -28,6 +28,7 @@ export class DetalharEventoModal implements OnInit {
   public carregandoParticipantes = true;
   /** Participante sendo removido (desabilita o botão dele). */
   public removendo?: number;
+  public removendoTodos = false;
 
   ngOnInit(): void {
     this.carregarParticipantes();
@@ -63,6 +64,38 @@ export class DetalharEventoModal implements OnInit {
             this.alertService.showError(
               "Erro",
               error.error?.message ?? "Não foi possível remover o participante.",
+            );
+          },
+        });
+      },
+    );
+  }
+
+  /** Remove todos de uma vez (ex.: para excluir o evento), com as mesmas regras da remoção de um. */
+  removerTodos(): void {
+    const id = this.evento.id;
+    if (id == null || this.removendo != null || this.removendoTodos || !this.participantes.length) {
+      return;
+    }
+    const valor = this.evento.valorInscricao
+      ? " O valor da inscrição sai das comandas que ainda estiverem abertas."
+      : "";
+    this.alertService.showConfirmation(
+      "Remover todos os participantes",
+      `Deseja remover os ${this.participantes.length} participantes do evento?${valor}`,
+      () => {
+        this.removendoTodos = true;
+        this.eventoService.removerTodosParticipantes(id).subscribe({
+          next: () => {
+            this.removendoTodos = false;
+            this.participantes = [];
+            this.alertService.showToast("Participantes removidos!");
+          },
+          error: (error) => {
+            this.removendoTodos = false;
+            this.alertService.showError(
+              "Erro",
+              error.error?.message ?? "Não foi possível remover os participantes.",
             );
           },
         });

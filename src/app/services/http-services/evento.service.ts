@@ -44,6 +44,11 @@ export class EventoApiService extends AbstractGenericClass {
     return this.httpClient.delete<void>(`${this.urlController}/${id}/participantes/${participanteId}`);
   }
 
+  /** Remove todos os participantes, com as mesmas regras da remoção de um. */
+  removerTodosParticipantes(id: number) {
+    return this.httpClient.delete<void>(`${this.urlController}/${id}/participantes`);
+  }
+
   deleteById(id: number) {
     return this.httpClient.delete<void>(`${this.urlController}/${id}`);
   }

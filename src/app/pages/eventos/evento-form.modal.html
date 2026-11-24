@@ -83,8 +83,32 @@
         </mat-form-field>
       </div>
     </div>
+    <div class="evento-form-outro-dia">
+      <mat-checkbox formControlName="outroDia" color="primary">Termina em outro dia</mat-checkbox>
+      @if (form.get("outroDia")?.value) {
+        <mat-form-field appearance="outline" class="admin-filter-field evento-form-data-fim">
+          <mat-label>Data de término</mat-label>
+          <input
+            matInput
+            [matDatepicker]="seletorDataFim"
+            [min]="form.get('data')?.value"
+            formControlName="dataFim"
+            placeholder="dd/mm/aaaa"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="seletorDataFim"></mat-datepicker-toggle>
+          <mat-datepicker #seletorDataFim></mat-datepicker>
+          @if (form.get("dataFim")?.hasError("matDatepickerParse")) {
+            <mat-error>Data inválida.</mat-error>
+          } @else if (form.get("dataFim")?.hasError("matDatepickerMin")) {
+            <mat-error>Deve ser depois do início.</mat-error>
+          } @else if (form.get("dataFim")?.hasError("required")) {
+            <mat-error>Informe a data de término.</mat-error>
+          }
+        </mat-form-field>
+      }
+    </div>
     @if (form.hasError("periodoInvalido")) {
-      <span class="evento-form-erro f-s-12">O fim do evento deve ser diferente do início.</span>
+      <span class="evento-form-erro f-s-12">O fim do evento deve ser depois do início.</span>
     }
     <div class="row">
       <div class="col-md-6">

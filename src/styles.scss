@@ -667,3 +667,28 @@ body {
   color: #5a6a85;
   font-size: 13px;
 }
+
+/* "Termina em outro dia" do cadastro de eventos (eventos de vários dias). */
+.evento-form-outro-dia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin: -8px 0 12px;
+}
+
+.evento-form-data-fim {
+  flex: 0 1 240px;
+}
+
+.evento-participantes-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.evento-participantes-remover-todos {
+  color: var(--mat-sys-error, #b3261e) !important;
+}

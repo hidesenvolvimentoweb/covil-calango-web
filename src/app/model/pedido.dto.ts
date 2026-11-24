@@ -7,6 +7,8 @@ export class PedidoDTO {
   public dataHora?: Date;
   public observacao?: string;
   public produto?: ProdutoDTO;
+  /** Nome do item sem produto, como a inscrição em um evento ("Evento - Torneio Locals"). */
+  public descricao?: string;
   public quantidade?: number;
   public comanda?: ComandaDTO;
 

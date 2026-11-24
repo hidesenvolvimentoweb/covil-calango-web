@@ -40,7 +40,8 @@ export class DashboardPage implements OnInit {
   }
 
   get pedidosFinalizados() {
-    return this.pedidos.filter((p) => p.status === StatusPedidoEnum.FINALIZADO);
+    // As inscrições em eventos entram na comanda já finalizadas, mas não são pedidos da cozinha.
+    return this.pedidos.filter((p) => p.status === StatusPedidoEnum.FINALIZADO && !!p.produto);
   }
 
   ngOnInit(): void {
