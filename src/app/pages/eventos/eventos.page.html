@@ -16,9 +16,12 @@
           <span><span class="eventos-legenda-cor eventos-cor-torneio"></span>Torneio</span>
           <span><span class="eventos-legenda-cor eventos-cor-board-games"></span>Board Games</span>
           <span><span class="eventos-legenda-cor eventos-cor-outros"></span>Outros</span>
+          <span><span class="eventos-legenda-cor eventos-cor-fechado"></span>Loja fechada</span>
           <span class="eventos-legenda-dica">Clique em um dia para cadastrar um evento e em um evento para ver os detalhes.</span>
         </div>
-        <full-calendar class="eventos-calendario" [options]="opcoesCalendario"></full-calendar>
+        @if (opcoesCalendario) {
+          <full-calendar class="eventos-calendario" [options]="opcoesCalendario"></full-calendar>
+        }
       </mat-card-content>
     </mat-card>
   </div>

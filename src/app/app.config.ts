@@ -30,6 +30,13 @@ import { httpAuthInterceptor } from "./interceptors/http-auth-interceptor";
 import { socialAuthServiceConfig } from "./config";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { PortuguesePaginatorIntl } from "./services/portuguese-paginator-intl";
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE,
+  MAT_NATIVE_DATE_FORMATS,
+} from "@angular/material/core";
+import { DataBrasilAdapter } from "./utils/data-brasil.adapter";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -56,5 +63,9 @@ export const appConfig: ApplicationConfig = {
       NgScrollbarModule,
     ),
     { provide: MatPaginatorIntl, useClass: PortuguesePaginatorIntl },
+    // Datepicker e timepicker em pt-BR ("28/11/2026", "14:00").
+    { provide: MAT_DATE_LOCALE, useValue: "pt-BR" },
+    { provide: DateAdapter, useClass: DataBrasilAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS },
   ],
 };

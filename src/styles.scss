@@ -455,6 +455,8 @@ body {
 .eventos-cor-torneio { background-color: #1b7f4b; }
 .eventos-cor-board-games { background-color: #2f6fb3; }
 .eventos-cor-outros { background-color: #7b4fb5; }
+/* Mesma cor de --fc-non-business-color do calendário (dias fechados e horários antes da abertura). */
+.eventos-cor-fechado { background-color: rgba(0, 0, 0, 0.08); }
 
 .eventos-calendario {
   --fc-border-color: rgba(0, 0, 0, 0.08);
@@ -469,6 +471,7 @@ body {
   --fc-now-indicator-color: #b3261e;
   --fc-highlight-color: rgba(27, 127, 75, 0.15);
   --fc-list-event-hover-bg-color: rgba(27, 127, 75, 0.06);
+  --fc-non-business-color: rgba(0, 0, 0, 0.08);
   display: block;
   font-size: 14px;
 
@@ -520,6 +523,11 @@ body {
     filter: brightness(0.92);
   }
 
+  /* Dias em que a loja não abre: não aceitam cadastro (selectAllow), o sombreado vem do businessHours. */
+  .eventos-dia-fechado .fc-daygrid-day-frame {
+    cursor: not-allowed;
+  }
+
   .fc-list-event {
     cursor: pointer;
   }
@@ -535,6 +543,22 @@ body {
 .evento-form-erro {
   color: var(--mat-sys-error, #b3261e);
   margin-top: -8px;
+}
+
+/* Dia fixo do cadastro feito pelo clique no calendário. */
+.evento-form-data {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(27, 127, 75, 0.08);
+  color: #1b7f4b;
+  font-weight: 600;
+
+  span::first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .evento-detalhe {
@@ -583,4 +607,63 @@ body {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   line-height: 1.6;
+}
+
+/* Participantes do evento (DetalharEventoModal). */
+.evento-participantes {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.evento-participante {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 4px 6px 8px;
+  border-radius: 10px;
+
+  &:hover {
+    background: rgba(27, 127, 75, 0.06);
+  }
+}
+
+.evento-participante-posicao {
+  display: grid;
+  place-items: center;
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(27, 127, 75, 0.12);
+  color: #1b7f4b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.evento-participante-dados {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.evento-participante-info {
+  font-size: 12px;
+  color: #5a6a85;
+}
+
+.evento-participante-remover {
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.evento-participantes-vazio {
+  margin: 4px 0 0;
+  color: #5a6a85;
+  font-size: 13px;
 }

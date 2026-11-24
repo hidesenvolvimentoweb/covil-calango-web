@@ -22,28 +22,69 @@
         <mat-error>Selecione o tipo do evento.</mat-error>
       }
     </mat-form-field>
+    @if (!mostrarData) {
+      <!-- Dia escolhido no calendário: fica fixo, só os horários são definidos aqui. -->
+      <div class="evento-form-data m-b-16">
+        <i-tabler name="calendar" class="icon-18"></i-tabler>
+        <span>{{ form.get("data")?.value | date: "fullDate" }}</span>
+      </div>
+    }
     <div class="row">
-      <div class="col-md-6">
+      @if (mostrarData) {
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+            <mat-label>Data</mat-label>
+            <input
+              matInput
+              [matDatepicker]="seletorData"
+              [matDatepickerFilter]="diaPermitido"
+              formControlName="data"
+              placeholder="dd/mm/aaaa"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="seletorData"></mat-datepicker-toggle>
+            <mat-datepicker #seletorData></mat-datepicker>
+            @if (form.get("data")?.hasError("matDatepickerFilter")) {
+              <mat-error>A loja não abre nesse dia.</mat-error>
+            } @else if (form.get("data")?.hasError("matDatepickerParse")) {
+              <mat-error>Data inválida.</mat-error>
+            } @else if (form.get("data")?.hasError("required")) {
+              <mat-error>Informe a data do evento.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      }
+      <div [class]="mostrarData ? 'col-md-4' : 'col-md-6'">
         <mat-form-field appearance="outline" class="w-100 admin-filter-field">
           <mat-label>Início</mat-label>
-          <input matInput type="datetime-local" formControlName="dataHoraInicio" />
-          @if (form.get("dataHoraInicio")?.hasError("required")) {
-            <mat-error>Informe o início do evento.</mat-error>
+          <input matInput [matTimepicker]="seletorInicio" formControlName="horaInicio" />
+          <mat-timepicker-toggle matIconSuffix [for]="seletorInicio"></mat-timepicker-toggle>
+          <mat-timepicker #seletorInicio [interval]="intervaloHorarios"></mat-timepicker>
+          @if (form.get("horaInicio")?.hasError("matTimepickerParse")) {
+            <mat-error>Horário inválido.</mat-error>
+          } @else if (form.get("horaInicio")?.hasError("required")) {
+            <mat-error>Informe o início.</mat-error>
           }
         </mat-form-field>
       </div>
-      <div class="col-md-6">
+      <div [class]="mostrarData ? 'col-md-4' : 'col-md-6'">
         <mat-form-field appearance="outline" class="w-100 admin-filter-field">
           <mat-label>Fim</mat-label>
-          <input matInput type="datetime-local" formControlName="dataHoraFim" />
-          @if (form.get("dataHoraFim")?.hasError("required")) {
-            <mat-error>Informe o fim do evento.</mat-error>
+          <input matInput [matTimepicker]="seletorFim" formControlName="horaFim" />
+          <mat-timepicker-toggle matIconSuffix [for]="seletorFim"></mat-timepicker-toggle>
+          <mat-timepicker #seletorFim [interval]="intervaloHorarios"></mat-timepicker>
+          @if (terminaNoDiaSeguinte) {
+            <mat-hint>Termina no dia seguinte</mat-hint>
+          }
+          @if (form.get("horaFim")?.hasError("matTimepickerParse")) {
+            <mat-error>Horário inválido.</mat-error>
+          } @else if (form.get("horaFim")?.hasError("required")) {
+            <mat-error>Informe o fim.</mat-error>
           }
         </mat-form-field>
       </div>
     </div>
     @if (form.hasError("periodoInvalido")) {
-      <span class="evento-form-erro f-s-12">O fim do evento deve ser depois do início.</span>
+      <span class="evento-form-erro f-s-12">O fim do evento deve ser diferente do início.</span>
     }
     <div class="row">
       <div class="col-md-6">

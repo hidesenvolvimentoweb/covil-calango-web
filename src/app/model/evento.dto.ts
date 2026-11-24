@@ -15,6 +15,8 @@ export class EventoDTO {
   public valorInscricao?: number | null;
   /** Nulo: sem limite de participantes. */
   public vagas?: number | null;
+  /** Inscrições feitas pelo app. */
+  public totalParticipantes?: number;
 }
 
 export interface EventoRequestDTO {
@@ -25,4 +27,13 @@ export interface EventoRequestDTO {
   dataHoraFim: string;
   valorInscricao?: number | null;
   vagas?: number | null;
+}
+
+/** Participante de um evento (inscrição feita pelo app com a comanda). */
+export interface EventoParticipanteDTO {
+  id: number;
+  /** Nome informado na comanda. */
+  nome: string;
+  comanda: string;
+  dataHoraInscricao: string;
 }

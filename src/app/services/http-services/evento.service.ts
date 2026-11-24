@@ -1,7 +1,8 @@
 import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
-import { EventoDTO, EventoRequestDTO } from "src/app/model/evento.dto";
+import { EventoDTO, EventoParticipanteDTO, EventoRequestDTO } from "src/app/model/evento.dto";
+import { EventoConfiguracaoDTO } from "src/app/model/evento-configuracao.dto";
 import { formatarDataHoraLocal } from "src/app/utils/data-hora.util";
 import { AbstractGenericClass } from "./generic.service";
 
@@ -17,6 +18,11 @@ export class EventoApiService extends AbstractGenericClass {
     return this.httpClient.get<EventoDTO[]>(this.urlController, { params });
   }
 
+  /** Funcionamento da loja: horário de abertura, dias fechados e sugestões do cadastro. */
+  getConfiguracao() {
+    return this.httpClient.get<EventoConfiguracaoDTO>(`${this.urlController}/configuracao`);
+  }
+
   getEventoById(id: number) {
     return this.httpClient.get<EventoDTO>(`${this.urlController}/${id}`);
   }
@@ -27,6 +33,15 @@ export class EventoApiService extends AbstractGenericClass {
 
   update(id: number, request: EventoRequestDTO) {
     return this.httpClient.put<EventoDTO>(`${this.urlController}/${id}`, request);
+  }
+
+  getParticipantes(id: number) {
+    return this.httpClient.get<EventoParticipanteDTO[]>(`${this.urlController}/${id}/participantes`);
+  }
+
+  /** Remove o participante; com a comanda aberta, o valor da inscrição também sai dela. */
+  removerParticipante(id: number, participanteId: number) {
+    return this.httpClient.delete<void>(`${this.urlController}/${id}/participantes/${participanteId}`);
   }
 
   deleteById(id: number) {

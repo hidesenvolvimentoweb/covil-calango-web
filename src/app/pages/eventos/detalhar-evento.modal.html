@@ -48,8 +48,8 @@
           <mat-card-content class="d-flex align-items-center gap-3">
             <i-tabler name="users" class="icon-24 text-success d-flex"></i-tabler>
             <div>
-              <span class="evento-detalhe-rotulo">Vagas</span>
-              <span class="evento-detalhe-valor">{{ evento.vagas ?? "Sem limite" }}</span>
+              <span class="evento-detalhe-rotulo">Vagas ocupadas</span>
+              <span class="evento-detalhe-valor">{{ ocupacao }}</span>
             </div>
           </mat-card-content>
         </mat-card>
@@ -64,6 +64,45 @@
         </mat-card-content>
       </mat-card>
     }
+
+    <mat-card class="b-1 shadow-none evento-detalhe-card">
+      <mat-card-content>
+        <span class="evento-detalhe-rotulo">Participantes</span>
+        @if (carregandoParticipantes) {
+          <p class="evento-participantes-vazio">Carregando participantes...</p>
+        } @else if (!participantes.length) {
+          <p class="evento-participantes-vazio">
+            Nenhum participante ainda. Os clientes participam pelo app no dia do evento.
+          </p>
+        } @else {
+          <ul class="evento-participantes">
+            @for (participante of participantes; track participante.id; let posicao = $index) {
+              <li class="evento-participante">
+                <span class="evento-participante-posicao">{{ posicao + 1 }}</span>
+                <div class="evento-participante-dados">
+                  <span class="f-w-600">{{ participante.nome }}</span>
+                  <span class="evento-participante-info">
+                    Comanda {{ participante.comanda }} · inscrito às
+                    {{ participante.dataHoraInscricao | date: "HH:mm" }}
+                  </span>
+                </div>
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="evento-participante-remover"
+                  matTooltip="Remover do evento"
+                  [attr.aria-label]="'Remover ' + participante.nome + ' do evento'"
+                  [disabled]="removendo != null"
+                  (click)="removerParticipante(participante)"
+                >
+                  <i-tabler name="user-minus" class="icon-20 d-flex"></i-tabler>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </mat-card-content>
+    </mat-card>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end" class="admin-dialog-actions">
