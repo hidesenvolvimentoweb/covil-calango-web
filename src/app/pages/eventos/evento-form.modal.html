@@ -1,0 +1,99 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="calendar-event" class="icon-24 text-success"></i-tabler>
+  <span>{{ data.id ? "Alterar Evento" : "Cadastrar Evento" }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <form [formGroup]="form" id="evento-form" (ngSubmit)="salvar()" class="admin-dialog-form">
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Nome do evento</mat-label>
+      <input matInput formControlName="nome" maxlength="255" />
+      @if (form.get("nome")?.hasError("required")) {
+        <mat-error>Informe o nome do evento.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="tipo">
+        @for (opcao of tipos; track opcao.valor) {
+          <mat-option [value]="opcao.valor">{{ opcao.rotulo }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get("tipo")?.hasError("required")) {
+        <mat-error>Selecione o tipo do evento.</mat-error>
+      }
+    </mat-form-field>
+    <div class="row">
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+          <mat-label>Início</mat-label>
+          <input matInput type="datetime-local" formControlName="dataHoraInicio" />
+          @if (form.get("dataHoraInicio")?.hasError("required")) {
+            <mat-error>Informe o início do evento.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+          <mat-label>Fim</mat-label>
+          <input matInput type="datetime-local" formControlName="dataHoraFim" />
+          @if (form.get("dataHoraFim")?.hasError("required")) {
+            <mat-error>Informe o fim do evento.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    @if (form.hasError("periodoInvalido")) {
+      <span class="evento-form-erro f-s-12">O fim do evento deve ser depois do início.</span>
+    }
+    <div class="row">
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+          <mat-label>Valor da inscrição</mat-label>
+          <input matInput type="number" min="0" step="0.01" formControlName="valorInscricao" />
+          <mat-hint>Deixe vazio para evento gratuito</mat-hint>
+          @if (form.get("valorInscricao")?.hasError("min")) {
+            <mat-error>O valor não pode ser negativo.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+          <mat-label>Vagas</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="vagas" />
+          <mat-hint>Deixe vazio para não limitar</mat-hint>
+          @if (form.get("vagas")?.hasError("min") || form.get("vagas")?.hasError("pattern")) {
+            <mat-error>Informe um número inteiro maior que zero.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-form-field appearance="outline" class="w-100 admin-filter-field">
+      <mat-label>Descrição</mat-label>
+      <textarea
+        matInput
+        formControlName="descricao"
+        [maxlength]="tamanhoMaximoDescricao"
+        rows="4"
+      ></textarea>
+      <mat-hint align="end">
+        {{ form.get("descricao")?.value?.length || 0 }}/{{ tamanhoMaximoDescricao }}
+      </mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    class="bg-success text-white admin-dialog-action"
+    type="submit"
+    form="evento-form"
+    [disabled]="form.invalid || salvando"
+  >
+    <i-tabler name="device-floppy" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    {{ data.id ? "Salvar alterações" : "Cadastrar" }}
+  </button>
+</mat-dialog-actions>

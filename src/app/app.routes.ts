@@ -49,6 +49,13 @@ export const routes: Routes = [
         data: { permission: "web-solicitacoes" },
       },
       {
+        path: "eventos",
+        loadChildren: () =>
+          import("./pages/eventos/eventos.routes").then((m) => m.EventosRoutes),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: { permission: "web-eventos" },
+      },
+      {
         path: "admin",
         loadChildren: () =>
           import("./pages/admin/admin.routes").then((m) => m.AdminRoutes),

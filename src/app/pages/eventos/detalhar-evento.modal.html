@@ -1,0 +1,94 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="calendar-event" class="icon-24 text-success"></i-tabler>
+  <span>{{ evento.nome }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <div class="evento-detalhe">
+    <span class="evento-tipo" [style.background-color]="corTipo">{{ rotuloTipo }}</span>
+
+    <div class="row">
+      <div class="col-12">
+        <mat-card class="b-1 shadow-none evento-detalhe-card">
+          <mat-card-content class="d-flex align-items-center gap-3">
+            <i-tabler name="clock" class="icon-24 text-success d-flex"></i-tabler>
+            <div>
+              <span class="evento-detalhe-rotulo">Quando</span>
+              @if (mesmoDia) {
+                <span class="evento-detalhe-valor">
+                  {{ evento.dataHoraInicio | date: "EEEE, dd/MM/yyyy" }} ·
+                  {{ evento.dataHoraInicio | date: "HH:mm" }} às {{ evento.dataHoraFim | date: "HH:mm" }}
+                </span>
+              } @else {
+                <span class="evento-detalhe-valor">
+                  {{ evento.dataHoraInicio | date: "dd/MM/yyyy HH:mm" }} até
+                  {{ evento.dataHoraFim | date: "dd/MM/yyyy HH:mm" }}
+                </span>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6">
+        <mat-card class="b-1 shadow-none evento-detalhe-card">
+          <mat-card-content class="d-flex align-items-center gap-3">
+            <i-tabler name="ticket" class="icon-24 text-success d-flex"></i-tabler>
+            <div>
+              <span class="evento-detalhe-rotulo">Inscrição</span>
+              <span class="evento-detalhe-valor">
+                {{ evento.valorInscricao ? (evento.valorInscricao | currency: "BRL") : "Gratuita" }}
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6">
+        <mat-card class="b-1 shadow-none evento-detalhe-card">
+          <mat-card-content class="d-flex align-items-center gap-3">
+            <i-tabler name="users" class="icon-24 text-success d-flex"></i-tabler>
+            <div>
+              <span class="evento-detalhe-rotulo">Vagas</span>
+              <span class="evento-detalhe-valor">{{ evento.vagas ?? "Sem limite" }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    @if (evento.descricao) {
+      <mat-card class="b-1 shadow-none evento-detalhe-card">
+        <mat-card-content>
+          <span class="evento-detalhe-rotulo">Descrição</span>
+          <p class="evento-detalhe-descricao">{{ evento.descricao }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Fechar
+  </button>
+  <button
+    mat-stroked-button
+    class="admin-dialog-action"
+    type="button"
+    [disabled]="excluindo"
+    (click)="excluir()"
+  >
+    <i-tabler name="trash" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Excluir
+  </button>
+  <button
+    mat-flat-button
+    class="bg-success text-white admin-dialog-action"
+    type="button"
+    [disabled]="excluindo"
+    (click)="alterar()"
+  >
+    <i-tabler name="pencil" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Alterar
+  </button>
+</mat-dialog-actions>

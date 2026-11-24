@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="eventos-cabecalho p-b-10">
+      <div class="page-title">
+        <i-tabler name="calendar-event" class="page-title-icon text-success"></i-tabler>
+        <mat-card-title>Eventos</mat-card-title>
+      </div>
+      <button mat-flat-button class="bg-success text-white" type="button" (click)="novoEvento()">
+        <i-tabler name="calendar-plus" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+        Novo evento
+      </button>
+    </div>
+    <mat-card class="cardWithShadow m-b-20">
+      <mat-card-content>
+        <div class="eventos-legenda">
+          <span><span class="eventos-legenda-cor eventos-cor-torneio"></span>Torneio</span>
+          <span><span class="eventos-legenda-cor eventos-cor-board-games"></span>Board Games</span>
+          <span><span class="eventos-legenda-cor eventos-cor-outros"></span>Outros</span>
+          <span class="eventos-legenda-dica">Clique em um dia para cadastrar um evento e em um evento para ver os detalhes.</span>
+        </div>
+        <full-calendar class="eventos-calendario" [options]="opcoesCalendario"></full-calendar>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

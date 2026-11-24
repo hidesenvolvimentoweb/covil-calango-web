@@ -34,6 +34,13 @@ export const navItems: NavItem[] = [
     bgcolor: "success",
   },
   {
+    displayName: "Eventos",
+    iconName: "calendar-event",
+    route: "/eventos/calendario",
+    permission: "web-eventos",
+    bgcolor: "success",
+  },
+  {
     displayName: "Usuários",
     iconName: "users",
     route: "/admin/usuarios",
