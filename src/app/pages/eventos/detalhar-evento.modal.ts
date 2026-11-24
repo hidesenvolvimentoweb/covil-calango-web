@@ -134,6 +134,11 @@ export class DetalharEventoModal implements OnInit {
     return this.evento.dataHoraInicio?.slice(0, 10) === this.evento.dataHoraFim?.slice(0, 10);
   }
 
+  /** Evento que já terminou não pode mais ser alterado (mesma regra da API). */
+  get encerrado(): boolean {
+    return !!this.evento.dataHoraFim && new Date(this.evento.dataHoraFim).getTime() <= Date.now();
+  }
+
   alterar(): void {
     this.dialogRef.close("alterar");
   }

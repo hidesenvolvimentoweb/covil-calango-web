@@ -86,10 +86,12 @@ export class EventosPage implements OnInit {
       },
       dayCellClassNames: (dia) =>
         lojaFechadaNoDia(configuracao, dia.date) ? ["eventos-dia-fechado"] : [],
-      // Clicar ou arrastar em um dia/horário livre abre o cadastro com esse período (exceto nos dias fechados).
+      // Clicar ou arrastar em um dia/horário livre abre o cadastro com esse período (exceto nos dias fechados e
+      // no que já passou: a API não cadastra evento que já terminou).
       selectable: true,
       selectMirror: true,
-      selectAllow: (selecao) => !lojaFechadaNoDia(configuracao, selecao.start),
+      selectAllow: (selecao) =>
+        !lojaFechadaNoDia(configuracao, selecao.start) && selecao.end.getTime() > Date.now(),
       select: (selecao) => this.selecionarPeriodo(selecao),
       eventClick: (clique) => this.abrirEvento(clique),
       events: (periodo, sucesso, falha) => this.carregarEventos(periodo, sucesso, falha),

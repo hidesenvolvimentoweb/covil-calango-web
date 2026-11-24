@@ -5,6 +5,9 @@
 <mat-dialog-content class="admin-dialog-content">
   <div class="evento-detalhe">
     <span class="evento-tipo" [style.background-color]="corTipo">{{ rotuloTipo }}</span>
+    @if (encerrado) {
+      <span class="evento-encerrado f-s-12">Evento encerrado: não pode mais ser alterado.</span>
+    }
 
     <div class="row">
       <div class="col-12">
@@ -134,14 +137,16 @@
     <i-tabler name="trash" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
     Excluir
   </button>
-  <button
-    mat-flat-button
-    class="bg-success text-white admin-dialog-action"
-    type="button"
-    [disabled]="excluindo"
-    (click)="alterar()"
-  >
-    <i-tabler name="pencil" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
-    Alterar
-  </button>
+  @if (!encerrado) {
+    <button
+      mat-flat-button
+      class="bg-success text-white admin-dialog-action"
+      type="button"
+      [disabled]="excluindo"
+      (click)="alterar()"
+    >
+      <i-tabler name="pencil" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+      Alterar
+    </button>
+  }
 </mat-dialog-actions>

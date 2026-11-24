@@ -38,12 +38,15 @@
               matInput
               [matDatepicker]="seletorData"
               [matDatepickerFilter]="diaPermitido"
+              [min]="dataMinima"
               formControlName="data"
               placeholder="dd/mm/aaaa"
             />
             <mat-datepicker-toggle matIconSuffix [for]="seletorData"></mat-datepicker-toggle>
             <mat-datepicker #seletorData></mat-datepicker>
-            @if (form.get("data")?.hasError("matDatepickerFilter")) {
+            @if (form.get("data")?.hasError("matDatepickerMin")) {
+              <mat-error>A data já passou.</mat-error>
+            } @else if (form.get("data")?.hasError("matDatepickerFilter")) {
               <mat-error>A loja não abre nesse dia.</mat-error>
             } @else if (form.get("data")?.hasError("matDatepickerParse")) {
               <mat-error>Data inválida.</mat-error>
@@ -109,6 +112,8 @@
     </div>
     @if (form.hasError("periodoInvalido")) {
       <span class="evento-form-erro f-s-12">O fim do evento deve ser depois do início.</span>
+    } @else if (form.hasError("periodoPassado")) {
+      <span class="evento-form-erro f-s-12">Esse horário já passou: escolha um fim depois de agora.</span>
     }
     <div class="row">
       <div class="col-md-6">

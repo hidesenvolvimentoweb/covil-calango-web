@@ -79,8 +79,14 @@ const periodoValidator = (grupo: AbstractControl): ValidationErrors | null => {
     return { periodoInvalido: true };
   }
   const periodo = calcularPeriodo(valor);
-  return periodo && periodo.fim <= periodo.inicio ? { periodoInvalido: true } : null;
+  if (periodo && periodo.fim <= periodo.inicio) {
+    return { periodoInvalido: true };
+  }
+  // A API não cadastra nem altera evento que já terminou.
+  return periodo && periodo.fim.getTime() <= Date.now() ? { periodoPassado: true } : null;
 };
+
+const inicioDoDia = (data: Date): Date => new Date(data.getFullYear(), data.getMonth(), data.getDate());
 
 @Component({
   selector: "app-evento-form-modal",
@@ -104,11 +110,19 @@ export class EventoFormModal implements OnInit {
   /** Dia do evento em alteração: continua aceito mesmo que a loja passe a não abrir nele. */
   private dataOriginal?: Date;
 
+  /** Primeiro dia aceito: hoje (dias que já passaram não recebem eventos). */
+  public readonly hoje = inicioDoDia(new Date());
+
   /** O datepicker não oferece os dias em que a loja não abre. */
   public readonly diaPermitido = (data: Date | null): boolean =>
     !data ||
     !lojaFechadaNoDia(this.data.configuracao, data) ||
     (!!this.dataOriginal && mesmoDia(data, this.dataOriginal));
+
+  /** Mínimo do datepicker: hoje ou, num evento em andamento que começou antes, o dia em que ele começou. */
+  get dataMinima(): Date {
+    return this.dataOriginal && this.dataOriginal < this.hoje ? inicioDoDia(this.dataOriginal) : this.hoje;
+  }
 
   constructor() {
     this.form = this.formBuilder.group(
@@ -246,6 +260,12 @@ export class EventoFormModal implements OnInit {
     let fim = this.data.fim ? new Date(this.data.fim) : undefined;
     if (!fim) {
       inicio = comHoraAbertura(configuracao, inicio);
+      // Hoje, depois da abertura: sugere o próximo horário livre em vez de um início que já passou.
+      const agora = new Date();
+      if (inicio < agora && mesmoDia(inicio, agora)) {
+        const intervalo = configuracao.intervaloHorariosMinutos * 60 * 1000;
+        inicio = new Date(Math.ceil(agora.getTime() / intervalo) * intervalo);
+      }
     }
     if (!fim || fim <= inicio) {
       fim = new Date(inicio.getTime() + configuracao.duracaoPadraoMinutos * 60 * 1000);

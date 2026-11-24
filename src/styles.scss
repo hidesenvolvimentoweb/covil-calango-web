@@ -581,6 +581,11 @@ body {
   color: #fff;
 }
 
+/* Aviso do detalhe de um evento que já terminou (não pode mais ser alterado). */
+.evento-encerrado {
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+}
+
 .evento-detalhe-card {
   height: 100%;
 }
