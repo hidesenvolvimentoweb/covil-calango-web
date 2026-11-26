@@ -1,0 +1,56 @@
+<div mat-dialog-title class="admin-dialog-title">
+  <i-tabler name="package" class="icon-24 text-success"></i-tabler>
+  <span>{{ pacote.descricao }}</span>
+</div>
+<mat-dialog-content class="admin-dialog-content">
+  <span [class]="classeStatus">{{ rotuloStatus[pacote.status] }}</span>
+  <div class="pacote-retirada-fotos m-t-16">
+    <figure class="pacote-foto">
+      <figcaption>Foto de quem deixou</figcaption>
+      @if (urlFoto(pacote.fotoDeposito); as url) {
+        <a [href]="url" target="_blank" rel="noopener"><img [src]="url" alt="Foto do item deixado" /></a>
+      }
+    </figure>
+    <figure class="pacote-foto">
+      <figcaption>Foto da retirada</figcaption>
+      @if (urlFoto(pacote.fotoRetirada); as url) {
+        <a [href]="url" target="_blank" rel="noopener"><img [src]="url" alt="Foto do item retirado" /></a>
+      } @else {
+        <div class="pacote-foto-vazia">
+          <i-tabler name="photo-off" class="icon-32 d-flex"></i-tabler>
+          <span>{{ pacote.status === "CANCELADO" ? "Pacote cancelado" : "Ainda não retirado" }}</span>
+        </div>
+      }
+    </figure>
+  </div>
+  <dl class="pacote-dados m-t-16">
+    @if (pacote.codigo) {
+      <dt>Código</dt>
+      <dd class="pacote-codigo">{{ pacote.codigo }}</dd>
+    }
+    <dt>Item</dt>
+    <dd>{{ categoria }} · {{ pacote.descricao }}</dd>
+    <dt>Para</dt>
+    <dd class="f-w-600">{{ pacote.destinatario }}</dd>
+    <dt>Deixado por</dt>
+    <dd>{{ pacote.remetente || "—" }} (comanda {{ pacote.comanda }})</dd>
+    <dt>Taxa</dt>
+    <dd>{{ pacote.valorTaxa ? (pacote.valorTaxa | currency: "BRL") : "Sem cobrança" }}</dd>
+    <dt>Deixado em</dt>
+    <dd>{{ pacote.dataHoraDeposito | date: "dd/MM/yyyy HH:mm" }}</dd>
+    @if (pacote.dataHoraRetirada) {
+      <dt>Retirado em</dt>
+      <dd>{{ pacote.dataHoraRetirada | date: "dd/MM/yyyy HH:mm" }} · {{ pacote.retiradoPor }}</dd>
+    }
+    @if (pacote.dataHoraCancelamento) {
+      <dt>Cancelado em</dt>
+      <dd>{{ pacote.dataHoraCancelamento | date: "dd/MM/yyyy HH:mm" }}</dd>
+    }
+  </dl>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="admin-dialog-actions">
+  <button mat-stroked-button class="admin-dialog-action" type="button" (click)="dialogRef.close()">
+    <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+    Fechar
+  </button>
+</mat-dialog-actions>

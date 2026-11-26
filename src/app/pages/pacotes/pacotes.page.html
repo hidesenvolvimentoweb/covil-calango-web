@@ -1,0 +1,215 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="page-title p-b-10">
+      <i-tabler name="package" class="page-title-icon text-success"></i-tabler>
+      <mat-card-title>Pacotes</mat-card-title>
+    </div>
+
+    <mat-card class="cardWithShadow m-b-20">
+      <mat-card-content>
+        <!-- No celular/tablet, abre a câmera traseira; no computador, a escolha de arquivo. -->
+        <input
+          #inputFoto
+          type="file"
+          hidden
+          accept="image/*"
+          capture="environment"
+          (change)="selecionarFotoRetirada($event)"
+        />
+        <span class="f-s-16 f-w-600 d-block m-b-4">Retirada</span>
+        <p class="f-s-14 text-muted m-b-16">
+          Peça o código a quem veio buscar o pacote, confira o item pela foto e registre a foto da entrega.
+        </p>
+        <form class="pacote-busca" (ngSubmit)="buscarPorCodigo()">
+          <mat-form-field appearance="outline" class="admin-filter-field pacote-busca-campo">
+            <mat-label>Código do pacote</mat-label>
+            <input
+              matInput
+              name="codigo"
+              [(ngModel)]="codigo"
+              maxlength="12"
+              autocomplete="off"
+              class="pacote-codigo-input"
+              placeholder="Ex.: K7M2QX"
+            />
+          </mat-form-field>
+          <button mat-flat-button class="bg-success text-white" type="submit" [disabled]="!codigo.trim() || buscando">
+            <i-tabler name="search" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+            Buscar
+          </button>
+          @if (pacoteEncontrado) {
+            <button mat-stroked-button class="admin-filter-action" type="button" (click)="limparRetirada()">
+              <i-tabler name="x" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+              Limpar
+            </button>
+          }
+        </form>
+
+        @if (pacoteEncontrado; as pacote) {
+          <div class="pacote-retirada">
+            <div class="pacote-retirada-fotos">
+              <figure class="pacote-foto">
+                <figcaption>Foto de quem deixou</figcaption>
+                @if (urlFoto(pacote.fotoDeposito); as url) {
+                  <a [href]="url" target="_blank" rel="noopener"><img [src]="url" alt="Foto do item deixado" /></a>
+                }
+              </figure>
+              @if (pacote.status === "AGUARDANDO_RETIRADA") {
+                <figure class="pacote-foto">
+                  <figcaption>Foto da retirada</figcaption>
+                  @if (previewRetirada) {
+                    <img [src]="previewRetirada" alt="Foto do item sendo retirado" />
+                  } @else {
+                    <button type="button" class="pacote-foto-vazia" (click)="inputFoto.click()">
+                      <i-tabler name="camera" class="icon-32 d-flex"></i-tabler>
+                      <span>{{ preparandoFoto ? "Preparando foto..." : "Tirar ou escolher foto" }}</span>
+                    </button>
+                  }
+                </figure>
+              } @else if (pacote.fotoRetirada) {
+                <figure class="pacote-foto">
+                  <figcaption>Foto da retirada</figcaption>
+                  <a [href]="urlFoto(pacote.fotoRetirada)" target="_blank" rel="noopener">
+                    <img [src]="urlFoto(pacote.fotoRetirada)" alt="Foto do item retirado" />
+                  </a>
+                </figure>
+              }
+            </div>
+
+            <div class="pacote-retirada-dados">
+              <span [class]="classeStatus(pacote.status)">{{ rotuloStatus[pacote.status] }}</span>
+              <dl class="pacote-dados">
+                <dt>Código</dt>
+                <dd class="pacote-codigo">{{ pacote.codigo }}</dd>
+                <dt>Item</dt>
+                <dd>{{ rotuloCategoria(pacote.categoria) }} · {{ pacote.descricao }}</dd>
+                <dt>Para</dt>
+                <dd class="f-w-600">{{ pacote.destinatario }}</dd>
+                <dt>Deixado por</dt>
+                <dd>{{ pacote.remetente || "—" }} (comanda {{ pacote.comanda }})</dd>
+                <dt>Deixado em</dt>
+                <dd>{{ pacote.dataHoraDeposito | date: "dd/MM/yyyy HH:mm" }}</dd>
+                @if (pacote.dataHoraRetirada) {
+                  <dt>Retirado em</dt>
+                  <dd>{{ pacote.dataHoraRetirada | date: "dd/MM/yyyy HH:mm" }} · {{ pacote.retiradoPor }}</dd>
+                }
+                @if (pacote.dataHoraCancelamento) {
+                  <dt>Cancelado em</dt>
+                  <dd>{{ pacote.dataHoraCancelamento | date: "dd/MM/yyyy HH:mm" }}</dd>
+                }
+              </dl>
+
+              @if (pacote.status === "AGUARDANDO_RETIRADA") {
+                <div class="d-flex flex-wrap gap-3 m-t-16">
+                  @if (previewRetirada) {
+                    <button mat-stroked-button class="admin-dialog-action" type="button" (click)="inputFoto.click()">
+                      <i-tabler name="camera" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+                      Trocar foto
+                    </button>
+                  }
+                  <button
+                    mat-flat-button
+                    class="bg-success text-white admin-dialog-action"
+                    type="button"
+                    [disabled]="!fotoRetirada || dandoBaixa"
+                    (click)="darBaixa()"
+                  >
+                    <i-tabler name="package-export" class="icon-18 d-inline-flex align-middle m-r-4"></i-tabler>
+                    Dar baixa
+                  </button>
+                </div>
+                @if (!fotoRetirada) {
+                  <span class="f-s-12 text-muted d-block m-t-8">A foto do item entregue é obrigatória.</span>
+                }
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <mat-button-toggle-group
+          class="pacote-filtros m-b-16"
+          aria-label="Filtrar por situação"
+          [value]="filtro"
+          (change)="alterarFiltro($event.value)"
+        >
+          @for (opcao of filtros; track opcao.valor) {
+            <mat-button-toggle [value]="opcao.valor">{{ opcao.rotulo }}</mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle text-center">
+            <thead>
+              <tr>
+                <th class="text-center">Foto</th>
+                <th class="text-center">Item</th>
+                <th class="text-center">Para</th>
+                <th class="text-center">Deixado por</th>
+                <th class="text-center">Deixado em</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pacote of pacotes; track pacote.id) {
+                <tr>
+                  <td>
+                    <span class="admin-table-thumb bg-light-success text-success">
+                      @if (urlFoto(pacote.fotoDeposito); as url) {
+                        <img [src]="url" [alt]="pacote.descricao" loading="lazy" />
+                      } @else {
+                        <i-tabler name="package" class="icon-20 d-flex"></i-tabler>
+                      }
+                    </span>
+                  </td>
+                  <td class="text-start">
+                    <span class="f-w-600 d-block">{{ pacote.descricao }}</span>
+                    <span class="f-s-12 text-muted">{{ rotuloCategoria(pacote.categoria) }}</span>
+                  </td>
+                  <td>{{ pacote.destinatario }}</td>
+                  <td>
+                    <span class="d-block">{{ pacote.remetente || "—" }}</span>
+                    <span class="f-s-12 text-muted">Comanda {{ pacote.comanda }}</span>
+                  </td>
+                  <td>{{ pacote.dataHoraDeposito | date: "dd/MM/yyyy HH:mm" }}</td>
+                  <td><span [class]="classeStatus(pacote.status)">{{ rotuloStatus[pacote.status] }}</span></td>
+                  <td>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      matTooltip="Ver detalhes"
+                      aria-label="Ver detalhes do pacote"
+                      (click)="detalhar(pacote)"
+                    >
+                      <i-tabler name="eye" class="icon-20 d-flex"></i-tabler>
+                    </button>
+                    @if (pacote.status === "AGUARDANDO_RETIRADA") {
+                      <button
+                        mat-icon-button
+                        type="button"
+                        matTooltip="Cancelar / recusar pacote"
+                        aria-label="Cancelar pacote"
+                        (click)="cancelar(pacote)"
+                      >
+                        <i-tabler name="package-off" class="icon-20 d-flex"></i-tabler>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="text-muted p-y-24">
+                    {{ carregando ? "Carregando pacotes..." : "Nenhum pacote encontrado." }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -697,3 +697,146 @@ body {
 .evento-participantes-remover-todos {
   color: var(--mat-sys-error, #b3261e) !important;
 }
+
+/* Pacotes: busca pelo código, fotos do depósito e da retirada, situação. */
+.pacote-busca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+
+  button {
+    margin-top: 6px;
+  }
+}
+
+.pacote-busca-campo {
+  width: 240px;
+  max-width: 100%;
+}
+
+.pacote-codigo-input,
+.pacote-codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.pacote-codigo {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.pacote-retirada {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  margin-top: 8px;
+
+  @media (max-width: 959px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.pacote-retirada-fotos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 599px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.pacote-foto {
+  margin: 0;
+
+  figcaption {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--mat-sys-on-surface-variant, #5f6368);
+    margin-bottom: 6px;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+.pacote-foto-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  border: 2px dashed rgba(0, 0, 0, 0.18);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant, #5f6368);
+  font-size: 14px;
+}
+
+button.pacote-foto-vazia {
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: #13deb9;
+    color: #13deb9;
+  }
+}
+
+.pacote-dados {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 12px 0 0;
+
+  dt {
+    font-size: 13px;
+    color: var(--mat-sys-on-surface-variant, #5f6368);
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.pacote-filtros {
+  flex-wrap: wrap;
+}
+
+.pacote-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pacote-status-aguardando_retirada {
+  background: #fef5e5;
+  color: #ae8e59;
+}
+
+.pacote-status-retirado {
+  background: #e6fffa;
+  color: #02b3a9;
+}
+
+.pacote-status-cancelado {
+  background: #fdede8;
+  color: #f3704d;
+}

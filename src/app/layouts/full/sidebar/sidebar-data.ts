@@ -41,6 +41,13 @@ export const navItems: NavItem[] = [
     bgcolor: "success",
   },
   {
+    displayName: "Pacotes",
+    iconName: "package",
+    route: "/pacotes/listar",
+    permission: "web-pacotes",
+    bgcolor: "success",
+  },
+  {
     displayName: "Usuários",
     iconName: "users",
     route: "/admin/usuarios",

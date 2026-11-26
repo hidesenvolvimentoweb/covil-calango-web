@@ -56,6 +56,13 @@ export const routes: Routes = [
         data: { permission: "web-eventos" },
       },
       {
+        path: "pacotes",
+        loadChildren: () =>
+          import("./pages/pacotes/pacotes.routes").then((m) => m.PacotesRoutes),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: { permission: "web-pacotes" },
+      },
+      {
         path: "admin",
         loadChildren: () =>
           import("./pages/admin/admin.routes").then((m) => m.AdminRoutes),
