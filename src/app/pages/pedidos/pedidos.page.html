@@ -2,6 +2,34 @@
   <i-tabler name="shopping-cart" class="page-title-icon text-success"></i-tabler>
   <mat-card-title>Pedidos</mat-card-title>
 </div>
+@if (cozinhaAberta !== null) {
+  <mat-card class="cardWithShadow cozinha-status" [class.cozinha-fechada]="!cozinhaAberta">
+    <mat-card-content class="cozinha-status-content">
+      <i-tabler [name]="cozinhaAberta ? 'tools-kitchen-2' : 'tools-kitchen-2-off'" class="icon-32 d-flex"></i-tabler>
+      <div class="cozinha-status-texto">
+        <span class="f-w-600 f-s-16">{{ cozinhaAberta ? "Cozinha aberta" : "Cozinha fechada" }}</span>
+        <span class="f-s-13">
+          {{
+            cozinhaAberta
+              ? "Os clientes podem pedir todos os itens do cardápio."
+              : "Os itens preparados na cozinha estão indisponíveis no cardápio."
+          }}
+        </span>
+      </div>
+      <button
+        mat-flat-button
+        type="button"
+        class="text-white cozinha-status-botao"
+        [class.bg-warning]="cozinhaAberta"
+        [class.bg-success]="!cozinhaAberta"
+        [disabled]="alterandoCozinha"
+        (click)="alternarCozinha()"
+      >
+        {{ cozinhaAberta ? "Fechar cozinha" : "Abrir cozinha" }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+}
 <div class="row">
   <div class="col-lg-4">
     <app-card-pedidos

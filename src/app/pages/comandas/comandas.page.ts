@@ -8,7 +8,10 @@ import { ComandaService } from "src/app/services/http-services/comanda.service";
 import { AlertService } from "src/app/services/alert.service";
 import {
   EMPTY,
+  Observable,
+  forkJoin,
   lastValueFrom,
+  map,
   Subject,
   Subscription,
   catchError,
@@ -25,7 +28,7 @@ import { DetalharComandaModal } from "./detalhar-comanda-modal/detalhar-comanda.
 import { WebsocketService } from "src/app/services/http-services/websocket.service";
 import { TOPICO_PAGAMENTOS } from "src/app/services/http-services/pagamento.service";
 import { PagamentoDTO } from "src/app/model/pagamento.dto";
-import { StatusPagamentoEnum } from "src/app/enums/status-pagamento.enum";
+import { fromMetodoPagamentoEnumValue, StatusPagamentoEnum } from "src/app/enums/status-pagamento.enum";
 import { StatusPagamentoComponent } from "src/app/components/status-pagamento/status-pagamento.component";
 import { StompSubscription } from "@stomp/stompjs";
 import { escolherFormaPagamento } from "./fechar-comanda.util";
@@ -82,9 +85,20 @@ export class ComandasPage implements OnInit, OnDestroy {
     "pagamento",
     "acoes",
   ];
+  /** Comandas de dias anteriores que ficaram abertas (ou em análise), ex.: esquecidas sem fechar. */
+  public readonly colunasAnteriores: string[] = [
+    "numero",
+    "cliente",
+    "dataEntrada",
+    "status",
+    "valorTotal",
+    "pagamento",
+    "acoes",
+  ];
   public comandasAbertas = new MatTableDataSource<ComandaDTO>([]);
   public comandasEmAnalise = new MatTableDataSource<ComandaDTO>([]);
   public comandasFechadas = new MatTableDataSource<ComandaDTO>([]);
+  public comandasAnteriores = new MatTableDataSource<ComandaDTO>([]);
 
   ngOnInit() {
     this.obterComandas();
@@ -93,11 +107,7 @@ export class ComandasPage implements OnInit, OnDestroy {
     this.inscricaoAtualizacoes = this.atualizacoes$
       .pipe(
         debounceTime(ATRASO_ATUALIZACAO_MS),
-        switchMap(() =>
-          this.comandaService
-            .getAllByParams(this.buildParams())
-            .pipe(catchError(() => EMPTY)),
-        ),
+        switchMap(() => this.buscarComandas().pipe(catchError(() => EMPTY))),
       )
       .subscribe((comandas) => this.distribuirComandas(comandas));
     this.escutarAtualizacoes();
@@ -109,16 +119,32 @@ export class ComandasPage implements OnInit, OnDestroy {
     this.inscricaoAtualizacoes?.unsubscribe();
   }
 
-  /** Busca as comandas do dia em todos os status e separa uma tabela para cada um (como na tela de pedidos). */
+  /**
+   * Busca todas as comandas abertas e em análise, de qualquer dia, e as fechadas de hoje, e separa uma tabela para
+   * cada status (como na tela de pedidos). As abertas de dias anteriores vão para "Comandas Anteriores".
+   */
   async obterComandas() {
-    this.distribuirComandas(
-      await lastValueFrom(this.comandaService.getAllByParams(this.buildParams())),
-    );
+    this.distribuirComandas(await lastValueFrom(this.buscarComandas()));
+  }
+
+  buscarComandas(): Observable<ComandaDTO[]> {
+    return forkJoin([
+      this.comandaService.getAllByParams(
+        this.buildParams([StatusComandaEnum.ABERTA, StatusComandaEnum.EM_ANALISE]),
+      ),
+      this.comandaService.getAllByParams(
+        this.buildParams([StatusComandaEnum.FECHADA], this.inicioDeHoje()),
+      ),
+    ]).pipe(map(([emAberto, fechadas]) => [...emAberto, ...fechadas]));
   }
 
   distribuirComandas(comandas: ComandaDTO[]) {
+    const inicioDeHoje = this.inicioDeHoje().getTime();
+    const deHoje = comandas.filter(
+      (comanda) => this.horario(comanda.dataHoraEntrada) >= inicioDeHoje,
+    );
     const doStatus = (status: StatusComandaEnum) =>
-      comandas.filter(
+      deHoje.filter(
         (comanda) => comanda.status === fromStatusComandaEnumValue(status),
       );
     this.comandasAbertas.data = doStatus(StatusComandaEnum.ABERTA);
@@ -127,6 +153,13 @@ export class ComandasPage implements OnInit, OnDestroy {
     this.comandasFechadas.data = doStatus(StatusComandaEnum.FECHADA).sort(
       (a, b) => this.horario(b.dataHoraSaida) - this.horario(a.dataHoraSaida),
     );
+    // Só as que ainda não foram fechadas; as mais antigas primeiro.
+    this.comandasAnteriores.data = comandas
+      .filter(
+        (comanda) =>
+          this.horario(comanda.dataHoraEntrada) < inicioDeHoje && !this.isFechada(comanda),
+      )
+      .sort((a, b) => this.horario(a.dataHoraEntrada) - this.horario(b.dataHoraEntrada));
   }
 
   isFechada(comanda: ComandaDTO): boolean {
@@ -148,27 +181,32 @@ export class ComandasPage implements OnInit, OnDestroy {
       this.inscricaoPagamentos = client.subscribe(TOPICO_PAGAMENTOS, (mensagem) => {
         const pagamento: PagamentoDTO = JSON.parse(mensagem.body);
         if (pagamento.status === StatusPagamentoEnum.PAGO) {
-          this.alertService.showToast(`Comanda ${pagamento.comanda} paga via PIX!`);
+          this.alertService.showToast(
+            `Comanda ${pagamento.comanda} paga pelo app (${fromMetodoPagamentoEnumValue(pagamento.metodo) || "PIX"})!`,
+          );
         }
         this.atualizacoes$.next();
       });
     });
   }
 
-  buildParams() {
+  /** Sem a data, a API devolve as comandas de todos os dias nos status informados. */
+  buildParams(status: StatusComandaEnum[], entradaAPartirDe?: Date) {
     let params = new HttpParams();
-    [
-      StatusComandaEnum.ABERTA,
-      StatusComandaEnum.EM_ANALISE,
-      StatusComandaEnum.FECHADA,
-    ].forEach(
-      (status) =>
-        (params = params.append("status", fromStatusComandaEnumValue(status))),
+    status.forEach(
+      (valor) =>
+        (params = params.append("status", fromStatusComandaEnumValue(valor))),
     );
-    const localDate = new Date();
-    localDate.setHours(0, 0, 0, 0);
-    params = params.append("dataHoraEntrada", localDate.toISOString());
+    if (entradaAPartirDe) {
+      params = params.append("dataHoraEntrada", entradaAPartirDe.toISOString());
+    }
     return params;
+  }
+
+  private inicioDeHoje(): Date {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return hoje;
   }
 
   abrirModalDetalharComanda(comanda: ComandaDTO) {

@@ -53,6 +53,10 @@ export class StatusPagamentoComponent {
     if (statusPagamento === StatusPagamentoEnum.PENDENTE) {
       return { rotulo: "Aguardando pagamento", classe: CLASSE_AGUARDANDO };
     }
+    if (statusPagamento === StatusPagamentoEnum.RECUSADO) {
+      // O cliente pode tentar outro cartão ou pagar de outra forma.
+      return { rotulo: "Cartão recusado", classe: CLASSE_ESTORNADO };
+    }
     return { rotulo: "Não pago", classe: CLASSE_NEUTRA };
   }
 }

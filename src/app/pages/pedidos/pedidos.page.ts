@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MaterialModule } from "../../material.module";
 import { CardPedidosComponent } from "src/app/components/card-pedidos/card-pedidos.component";
@@ -11,6 +11,12 @@ import { StatusPedidoEnum } from "src/app/enums/status-pedido.enum";
 import { lastValueFrom } from "rxjs";
 import { AlertService } from "src/app/services/alert.service";
 import { WebsocketService } from "src/app/services/http-services/websocket.service";
+import { StompSubscription } from "@stomp/stompjs";
+import {
+  CozinhaApiService,
+  CozinhaDTO,
+  TOPICO_COZINHA,
+} from "src/app/services/http-services/cozinha.service";
 
 @Component({
   selector: "app-pedidos",
@@ -23,10 +29,16 @@ import { WebsocketService } from "src/app/services/http-services/websocket.servi
   templateUrl: "./pedidos.page.html",
   encapsulation: ViewEncapsulation.None,
 })
-export class PedidosPage implements OnInit {
+export class PedidosPage implements OnInit, OnDestroy {
   private pedidoService = inject(PedidoService);
   private alertService = inject(AlertService);
   private websocketService = inject(WebsocketService);
+  private cozinhaService = inject(CozinhaApiService);
+  private inscricoes: StompSubscription[] = [];
+
+  /** Nulo até a situação chegar da API. */
+  public cozinhaAberta: boolean | null = null;
+  public alterandoCozinha = false;
 
   public displayedColumns: string[] = [
     "pedido",
@@ -42,15 +54,68 @@ export class PedidosPage implements OnInit {
 
   ngOnInit() {
     this.carregarPedidos();
+    this.carregarCozinha();
     this.createWebSocketConnection();
+  }
+
+  ngOnDestroy() {
+    this.inscricoes.forEach((inscricao) => inscricao.unsubscribe());
   }
 
   createWebSocketConnection() {
     this.websocketService.createWebSocketConnection().subscribe(() => {
-      this.websocketService
-        .getClient()
-        .subscribe(`/topic/pedidos`, () => this.carregarPedidos());
+      const client = this.websocketService.getClient();
+      this.inscricoes.push(
+        client.subscribe(`/topic/pedidos`, () => this.carregarPedidos()),
+        // Outro atendente abriu ou fechou a cozinha.
+        client.subscribe(TOPICO_COZINHA, (mensagem) => {
+          const cozinha: CozinhaDTO = JSON.parse(mensagem.body);
+          this.cozinhaAberta = cozinha.aberta;
+        }),
+      );
     });
+  }
+
+  carregarCozinha() {
+    this.cozinhaService.getSituacao().subscribe({
+      next: (cozinha) => (this.cozinhaAberta = cozinha.aberta),
+      error: () => (this.cozinhaAberta = null),
+    });
+  }
+
+  /** Abre ou fecha a cozinha: fechada, os itens "Preparado na cozinha" ficam indisponíveis no cardápio. */
+  alternarCozinha() {
+    if (this.cozinhaAberta === null || this.alterandoCozinha) {
+      return;
+    }
+    const abrir = !this.cozinhaAberta;
+    this.alertService.showConfirmation(
+      abrir ? "Abrir a cozinha?" : "Fechar a cozinha?",
+      abrir
+        ? "Os clientes voltam a pedir os itens preparados na cozinha."
+        : "Os clientes não poderão mais pedir os itens preparados na cozinha (hambúrgueres, batatas...). Os pedidos já feitos continuam na fila.",
+      () => {
+        this.alterandoCozinha = true;
+        this.cozinhaService.definirAberta(abrir).subscribe({
+          next: (cozinha) => {
+            this.alterandoCozinha = false;
+            this.cozinhaAberta = cozinha.aberta;
+            if (cozinha.aberta) {
+              this.alertService.showToast("Cozinha aberta!");
+            } else {
+              this.alertService.showToast("Cozinha fechada!", "warning");
+            }
+          },
+          error: (error) => {
+            this.alterandoCozinha = false;
+            this.alertService.showError(
+              "Erro",
+              error.error?.message ?? "Não foi possível alterar a cozinha.",
+            );
+          },
+        });
+      },
+    );
   }
 
   async carregarPedidos() {

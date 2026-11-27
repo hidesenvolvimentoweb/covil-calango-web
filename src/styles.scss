@@ -840,3 +840,31 @@ button.pacote-foto-vazia {
   background: #fdede8;
   color: #f3704d;
 }
+
+/* Situação da cozinha na tela de Pedidos */
+.cozinha-status {
+  margin-bottom: 16px;
+  border-left: 4px solid #13deb9;
+}
+
+.cozinha-status.cozinha-fechada {
+  border-left-color: #ffae1f;
+  background: #fef5e5;
+}
+
+.cozinha-status-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.cozinha-status-texto {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+}
+
+.cozinha-status-botao {
+  flex: 0 0 auto;
+}

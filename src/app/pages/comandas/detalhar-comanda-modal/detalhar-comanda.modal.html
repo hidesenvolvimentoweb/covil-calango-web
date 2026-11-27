@@ -120,6 +120,14 @@
                     }
                   </div>
                 </div>
+                @if (meioPagamento) {
+                  <p class="f-s-14 m-t-16 m-b-0">
+                    Pelo app: <span class="f-w-600">{{ meioPagamento }}</span>
+                  </p>
+                }
+                @if (comanda.ultimoPagamento.mensagemRecusa) {
+                  <p class="f-s-14 m-t-8 m-b-0">Recusado: {{ comanda.ultimoPagamento.mensagemRecusa }}</p>
+                }
                 @if (pixPendente) {
                   <p class="f-s-14 m-t-16 m-b-0">
                     Enquanto o pagamento estiver pendente, o cliente não consegue fazer novos pedidos.
@@ -141,6 +149,9 @@
 <div class="modal-footer d-flex justify-content-center">
   @if (pixPendente) {
     <button mat-stroked-button class="shadow-none m-l-4" (click)="cancelarPix()">Cancelar Pagamento</button>
+  }
+  @if (podeEstornar) {
+    <button mat-stroked-button class="shadow-none m-l-4" (click)="estornar()">Estornar Pagamento</button>
   }
   @if (!fechada) {
     <button mat-flat-button class="shadow-none bg-warning m-l-4" (click)="fecharComanda()">

@@ -55,6 +55,7 @@ export class ProdutoFormModal implements OnInit, OnDestroy {
       valor: [0, [Validators.required, Validators.min(0)]],
       ingredientes: [""],
       prazo: [null as number | null, Validators.min(0)],
+      usaCozinha: [false],
       estoque: [
         null as number | null,
         [Validators.min(0), Validators.pattern(/^\d+$/)],

@@ -63,6 +63,7 @@
                 <th class="text-center">Categoria</th>
                 <th class="text-center">Valor</th>
                 <th class="text-center">Prazo</th>
+                <th class="text-center">Cozinha</th>
                 <th class="text-center">Estoque</th>
                 <th class="text-center">Ações</th>
               </tr>
@@ -83,6 +84,13 @@
                   <td>{{ rotuloCategoria(produto) }}</td>
                   <td>{{ produto.valor | currency: "BRL" }}</td>
                   <td>{{ produto.prazo != null ? produto.prazo + " min" : "—" }}</td>
+                  <td>
+                    @if (produto.usaCozinha) {
+                      <span class="status-pagamento status-pagamento-aguardando" matTooltip="Só pode ser pedido com a cozinha aberta">Cozinha</span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
                   <td>
                     @if (produto.estoque == null) {
                       <span class="text-muted">Sem limite</span>
@@ -116,12 +124,12 @@
               }
               @if (!carregando && produtos.length === 0) {
                 <tr>
-                  <td colspan="7" class="text-center">Nenhum produto encontrado.</td>
+                  <td colspan="8" class="text-center">Nenhum produto encontrado.</td>
                 </tr>
               }
               @if (carregando) {
                 <tr>
-                  <td colspan="7" class="text-center">Carregando...</td>
+                  <td colspan="8" class="text-center">Carregando...</td>
                 </tr>
               }
             </tbody>

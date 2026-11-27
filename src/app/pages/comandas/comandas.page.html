@@ -3,7 +3,7 @@
   <mat-card-title>Comandas</mat-card-title>
 </div>
 <div class="row">
-  <div class="col-lg-4">
+  <div class="col-lg-3 col-md-6">
     <app-card-pedidos
       [title]="'Comandas Abertas'"
       [value]="comandasAbertas.data.length"
@@ -11,7 +11,7 @@
       icon="receipt"
     ></app-card-pedidos>
   </div>
-  <div class="col-lg-4">
+  <div class="col-lg-3 col-md-6">
     <app-card-pedidos
       [title]="'Comandas Em Análise'"
       [value]="comandasEmAnalise.data.length"
@@ -19,12 +19,20 @@
       icon="clock-exclamation"
     ></app-card-pedidos>
   </div>
-  <div class="col-lg-4">
+  <div class="col-lg-3 col-md-6">
     <app-card-pedidos
       [title]="'Comandas Fechadas'"
       [value]="comandasFechadas.data.length"
       variant="danger"
       icon="receipt-off"
+    ></app-card-pedidos>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <app-card-pedidos
+      [title]="'Comandas Anteriores'"
+      [value]="comandasAnteriores.data.length"
+      variant="secondary"
+      icon="calendar-time"
     ></app-card-pedidos>
   </div>
 </div>
@@ -34,6 +42,21 @@
     *ngTemplateOutlet="
       tabelaComandas;
       context: { titulo: 'Comandas Abertas', icone: 'receipt', dados: comandasAbertas, colunas: colunasAbertas }
+    "
+  ></ng-container>
+}
+
+@if (comandasAnteriores.data.length) {
+  <ng-container
+    *ngTemplateOutlet="
+      tabelaComandas;
+      context: {
+        titulo: 'Comandas Anteriores',
+        subtitulo: 'Abertas em dias anteriores e ainda não fechadas. Confira e feche as que ficaram abertas por engano.',
+        icone: 'calendar-time',
+        dados: comandasAnteriores,
+        colunas: colunasAnteriores,
+      }
     "
   ></ng-container>
 }
@@ -62,11 +85,21 @@
 }
 
 <!-- Mesma tabela para os três status; cada um escolhe as colunas que exibe. -->
-<ng-template #tabelaComandas let-titulo="titulo" let-icone="icone" let-dados="dados" let-colunas="colunas">
+<ng-template
+  #tabelaComandas
+  let-titulo="titulo"
+  let-subtitulo="subtitulo"
+  let-icone="icone"
+  let-dados="dados"
+  let-colunas="colunas"
+>
   <div class="page-title p-b-10">
     <i-tabler [name]="icone" class="page-title-icon text-success"></i-tabler>
     <mat-card-title>{{ titulo }}</mat-card-title>
   </div>
+  @if (subtitulo) {
+    <p class="f-s-14 text-muted m-t-0 m-b-10">{{ subtitulo }}</p>
+  }
   <mat-card class="cardWithShadow">
     <mat-card-content>
       <div class="table-responsive">
@@ -93,6 +126,22 @@
             </th>
             <td mat-cell *matCellDef="let comanda" class="text-center">
               <span class="f-w-600 f-s-14">{{ comanda.dataHoraEntrada | date: "HH:mm" }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="dataEntrada">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center">
+              Data da Entrada
+            </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.dataHoraEntrada | date: "dd/MM/yyyy HH:mm" }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 text-center"> Situação </th>
+            <td mat-cell *matCellDef="let comanda" class="text-center">
+              <span class="f-w-600 f-s-14">{{ comanda.status }}</span>
             </td>
           </ng-container>
 
